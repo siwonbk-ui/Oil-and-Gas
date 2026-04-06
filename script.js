@@ -330,7 +330,15 @@ document.addEventListener('DOMContentLoaded', () => {
         const dateRangeEl = document.getElementById('trends-date-range');
         if (dateRangeEl && tableData.length > 0) {
             const startDate = tableData[0].date;
-            const endDate = tableData[tableData.length - 1].date;
+            
+            // Generate current Thai date for "Up to date" display
+            const thaiMonths = ["ม.ค.", "ก.พ.", "มี.ค.", "เม.ย.", "พ.ค.", "มิ.ย.", "ก.ค.", "ส.ค.", "ก.ย.", "ต.ค.", "พ.ย.", "ธ.ค."];
+            const now = new Date();
+            const day = now.getDate();
+            const month = thaiMonths[now.getMonth()];
+            const year = (now.getFullYear() + 543).toString().slice(-2);
+            const endDate = `${day} ${month} ${year}`;
+            
             dateRangeEl.textContent = `สรุปข้อมูลตั้งแต่วันที่ ${startDate} - ${endDate}`;
         }
 
