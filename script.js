@@ -40,6 +40,8 @@ document.addEventListener('DOMContentLoaded', () => {
     let impactComboChart;
     let electricBarChart;
     let electricDoughnutChart;
+    let trendsLineChart;
+    let trendsBarChart;
 
     // Register ChartDataLabels plugin globally
     if (typeof ChartDataLabels !== 'undefined') {
@@ -257,6 +259,66 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             });
         }
+
+        const ctxTrendsLine = document.getElementById('trendsLineChart');
+        if (ctxTrendsLine) {
+            trendsLineChart = new Chart(ctxTrendsLine.getContext('2d'), {
+                type: 'line',
+                data: {
+                    labels: ['18 มี.ค. 69', '21 มี.ค. 69', '24 มี.ค. 69', '26 มี.ค. 69', '31 มี.ค. 69', '2 เม.ย. 69', '3 เม.ย. 69', '5 เม.ย. 69'],
+                    datasets: [
+                        { label: 'ดีเซล', data: [0.5, 0.7, 1.8, 6.0, 1.8, 3.5, 3.5, 2.8], borderColor: '#1d4ed8', backgroundColor: '#1d4ed8', tension: 0.3 },
+                        { label: 'เบนซิน/โซฮอล์', data: [1.0, 1.0, 2.0, 6.0, 1.0, 1.2, 0.7, null], borderColor: '#dc2626', backgroundColor: '#dc2626', tension: 0.3, spanGaps: true },
+                        { label: 'E20', data: [-0.79, 1.0, 2.0, 6.0, 1.0, 1.2, 0.7, null], borderColor: '#f59e0b', backgroundColor: '#f59e0b', tension: 0.3, spanGaps: true },
+                        { label: 'E85', data: [-2.0, 1.0, 2.0, 6.0, 1.0, 1.2, 0.7, null], borderColor: '#10b981', backgroundColor: '#10b981', tension: 0.3, spanGaps: true }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { 
+                        legend: { position: 'bottom' },
+                        datalabels: { display: false }
+                    },
+                    scales: { y: { beginAtZero: false } },
+                    interaction: { mode: 'index', intersect: false }
+                }
+            });
+        }
+
+        const ctxTrendsBar = document.getElementById('trendsBarChart');
+        if (ctxTrendsBar) {
+            trendsBarChart = new Chart(ctxTrendsBar.getContext('2d'), {
+                type: 'bar',
+                data: {
+                    labels: ['เบนซิน/โซฮอล์', 'E20', 'E85', 'ดีเซลธรรมดา'],
+                    datasets: [{
+                        data: [12.90, 11.11, 9.90, 20.60],
+                        backgroundColor: ['#dc2626', '#f59e0b', '#10b981', '#1d4ed8'],
+                        borderRadius: 4
+                    }]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        datalabels: {
+                            anchor: 'end',
+                            align: 'right',
+                            formatter: (val) => '+' + val.toFixed(2),
+                            font: { size: 11, weight: 'bold' },
+                            color: '#64748b'
+                        }
+                    },
+                    scales: {
+                        x: { beginAtZero: true, max: 25 },
+                        y: { grid: { display: false } }
+                    }
+                }
+            });
+        }
     }
 
     function renderDashboard(fuelType) {
@@ -335,6 +397,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const overviewView = document.getElementById('overview-view');
     const impactView = document.getElementById('impact-view');
     const electricView = document.getElementById('electric-impact-view');
+    const trendsThView = document.getElementById('trends-th-view');
     const headerTitle = document.querySelector('.header h1');
     const headerSubtitle = document.querySelector('.header .subtitle');
 
@@ -347,27 +410,36 @@ document.addEventListener('DOMContentLoaded', () => {
             item.classList.add('active');
             
             const type = item.getAttribute('data-type');
-            const ctaiLogo = document.getElementById('chiatai-logo');
             
-            if (type === 'impact') {
+            if (type === 'trends-th') {
+                overviewView.style.display = 'none';
+                impactView.style.display = 'none';
+                if(electricView) electricView.style.display = 'none';
+                if(trendsThView) trendsThView.style.display = 'block';
+                // Hide main header as custom one is used within the view
+                document.querySelector('.header').style.display = 'none';
+            } else if (type === 'impact') {
+                document.querySelector('.header').style.display = 'flex';
                 overviewView.style.display = 'none';
                 if(electricView) electricView.style.display = 'none';
+                if(trendsThView) trendsThView.style.display = 'none';
                 impactView.style.display = 'block';
-                if(ctaiLogo) ctaiLogo.style.display = 'none';
                 headerTitle.textContent = 'Scenario น้ำมัน';
                 headerSubtitle.textContent = 'Impact evaluation of oil price adjustments';
             } else if (type === 'electric') {
+                document.querySelector('.header').style.display = 'flex';
                 overviewView.style.display = 'none';
                 impactView.style.display = 'none';
+                if(trendsThView) trendsThView.style.display = 'none';
                 if(electricView) electricView.style.display = 'block';
-                if(ctaiLogo) ctaiLogo.style.display = 'flex';
                 headerTitle.textContent = 'ค่าไฟฟ้า (Ft) ปี 2569 กรณีปรับราคาตามรัฐบาลประกาศ';
                 headerSubtitle.textContent = 'อ้างอิงจากการใช้จากปี 2568';
-            } else if (fuelData[type]) {
+            } else if (fuelData && fuelData[type]) {
+                document.querySelector('.header').style.display = 'flex';
                 overviewView.style.display = 'block';
                 impactView.style.display = 'none';
                 if(electricView) electricView.style.display = 'none';
-                if(ctaiLogo) ctaiLogo.style.display = 'none';
+                if(trendsThView) trendsThView.style.display = 'none';
                 headerTitle.textContent = 'Overview';
                 headerSubtitle.textContent = 'Latest retail fuel prices in Southeast Asia';
                 
@@ -391,7 +463,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const textColor = isDark ? '#94a3b8' : '#64748b';
         const gridColor = isDark ? '#334155' : '#e2e8f0';
 
-        [trendChart, barChart, impactBarChart, impactComboChart, electricBarChart, electricDoughnutChart].forEach(chart => {
+        [trendChart, barChart, impactBarChart, impactComboChart, electricBarChart, electricDoughnutChart, trendsLineChart, trendsBarChart].forEach(chart => {
             if (!chart) return;
             
             if (chart.options.scales) {
