@@ -68,7 +68,7 @@ def fetch_real_prices(data):
             
             # Update the historical chart
             # Find the corresponding dataset by country code/label
-            history_dataset = data[fuel_type]['history']['datasets'][i]
+            history_dataset = next(d for d in data[fuel_type]['history']['datasets'] if d['label'] == card['country'])
             history_data = history_dataset['data']
             
             # Shift left (remove oldest day) and append today's new price
