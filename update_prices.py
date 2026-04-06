@@ -78,7 +78,7 @@ def fetch_real_prices(data):
     
     # Real World Data Containers
     real_prices = {
-        'TH': {'gasoline': None, 'diesel': None},
+        'TH': {'gasoline': None, 'diesel': None, 'e20': None, 'e85': None},
         'MY': fetch_malaysia_prices(rates),
         'SG': fetch_singapore_prices(rates),
         'ID': {'gasoline': None, 'diesel': None},  # To be implemented
@@ -98,6 +98,10 @@ def fetch_real_prices(data):
                         real_prices['TH']['gasoline'] = item.get('PriceToday')
                     elif item.get('OilName') == 'ไฮดีเซล S':
                         real_prices['TH']['diesel'] = item.get('PriceToday')
+                    elif item.get('OilName') == 'แก๊สโซฮอล์ E20 S EVO':
+                        real_prices['TH']['e20'] = item.get('PriceToday')
+                    elif item.get('OilName') == 'แก๊สโซฮอล์ E85 S EVO':
+                        real_prices['TH']['e85'] = item.get('PriceToday')
     except Exception as e:
         print(f"THfetch failed: {e}")
     
@@ -135,6 +139,70 @@ def fetch_real_prices(data):
             history_data.pop(0)
             history_data.append(card['price'])
             history_dataset['data'] = [round(v, 2) for v in history_data]
+
+    # SEED AND UPDATE TRENDS_TH
+    if 'trends_th' not in data:
+        data['trends_th'] = {
+            'last_known_prices': {
+                'gasoline': 40.0,
+                'e20': 38.0,
+                'e85': 30.0,
+                'diesel': 32.0
+            },
+            'table_data': [
+                {'date': '18 มี.ค. 69', 'gasoline': 1.00, 'e20': -0.79, 'e85': -2.00, 'diesel': 0.50},
+                {'date': '21 มี.ค. 69', 'gasoline': 1.00, 'e20': 1.00, 'e85': 1.00, 'diesel': 0.70},
+                {'date': '24 มี.ค. 69', 'gasoline': 2.00, 'e20': 2.00, 'e85': 2.00, 'diesel': 1.80},
+                {'date': '26 มี.ค. 69', 'gasoline': 6.00, 'e20': 6.00, 'e85': 6.00, 'diesel': 6.00},
+                {'date': '31 มี.ค. 69', 'gasoline': 1.00, 'e20': 1.00, 'e85': 1.00, 'diesel': 1.80},
+                {'date': '2 เม.ย. 69', 'gasoline': 1.20, 'e20': 1.20, 'e85': 1.20, 'diesel': 3.50},
+                {'date': '3 เม.ย. 69', 'gasoline': 0.70, 'e20': 0.70, 'e85': 0.70, 'diesel': 3.50},
+                {'date': '5 เม.ย. 69', 'gasoline': 0.00, 'e20': 0.00, 'e85': 0.00, 'diesel': 2.80}
+            ]
+        }
+        # Update last known to the real fetched if available initially, otherwise use fake base
+        if real_prices['TH']['gasoline']:
+            data['trends_th']['last_known_prices'] = {
+                'gasoline': float(real_prices['TH']['gasoline']),
+                'e20': float(real_prices['TH']['e20'] or 38.0),
+                'e85': float(real_prices['TH']['e85'] or 30.0),
+                'diesel': float(real_prices['TH']['diesel'])
+            }
+    else:
+        # Check for daily deltas
+        last_known = data['trends_th']['last_known_prices']
+        curr_g = float(real_prices['TH']['gasoline'] or last_known['gasoline'])
+        curr_e20 = float(real_prices['TH']['e20'] or last_known['e20'])
+        curr_e85 = float(real_prices['TH']['e85'] or last_known['e85'])
+        curr_d = float(real_prices['TH']['diesel'] or last_known['diesel'])
+
+        d_g = round(curr_g - last_known['gasoline'], 2)
+        d_e20 = round(curr_e20 - last_known['e20'], 2)
+        d_e85 = round(curr_e85 - last_known['e85'], 2)
+        d_d = round(curr_d - last_known['diesel'], 2)
+
+        # If any price changed
+        if any(abs(d) > 0.001 for d in [d_g, d_e20, d_e85, d_d]):
+            # Format date to match mock up (e.g. 10 เม.ย. 69)
+            thai_months = ["ม.ค.", "ก.พ.", "มี.ค.", "เม.ย.", "พ.ค.", "มิ.ย.", "ก.ค.", "ส.ค.", "ก.ย.", "ต.ค.", "พ.ย.", "ธ.ค."]
+            now = datetime.now(tz)
+            thai_year = now.year + 543
+            formatted_date = f"{now.day} {thai_months[now.month-1]} {str(thai_year)[-2:]}"
+            
+            data['trends_th']['table_data'].append({
+                'date': formatted_date,
+                'gasoline': d_g,
+                'e20': d_e20,
+                'e85': d_e85,
+                'diesel': d_d
+            })
+            
+            data['trends_th']['last_known_prices'] = {
+                'gasoline': curr_g,
+                'e20': curr_e20,
+                'e85': curr_e85,
+                'diesel': curr_d
+            }
 
     return data
 
