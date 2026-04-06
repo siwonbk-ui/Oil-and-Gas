@@ -509,6 +509,218 @@ body {
     margin-top: 32px;
 }
 
+/* =========================================
+   ELECTRICITY SCENARIO SECTION
+   ========================================= */
+
+/* Top Metrics */
+.electric-metrics-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+    margin-bottom: 30px;
+}
+.electric-card {
+    padding: 24px;
+    border-radius: var(--radius-lg);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border: 1px solid var(--border-color);
+}
+.electric-card h4 {
+    font-size: 13px;
+    color: var(--text-secondary);
+    margin-bottom: 8px;
+    font-weight: 600;
+}
+.ec-value {
+    font-size: 28px;
+    font-weight: 700;
+    margin-bottom: 4px;
+}
+.ec-unit {
+    font-size: 14px;
+    font-weight: 500;
+}
+.ec-sub {
+    font-size: 12px;
+    color: var(--text-secondary);
+}
+.ec-icon {
+    font-size: 32px;
+    opacity: 0.2;
+}
+
+.ec-blue { background-color: #f0fdfa; border-left: 5px solid #0ea5e9; }
+.ec-blue .ec-value { color: #0369a1; }
+.ec-blue .ec-icon { color: #0ea5e9; }
+
+.ec-red { background-color: #fef2f2; border-left: 5px solid #ef4444; }
+.ec-red .ec-value { color: #b91c1c; }
+.ec-red .ec-icon { color: #ef4444; }
+
+.ec-orange { background-color: #fff7ed; border-left: 5px solid #f97316; }
+.ec-orange .ec-value { color: #c2410c; }
+.ec-orange .ec-icon { color: #f97316; }
+
+/* Dark Mode Overrides for Electric Cards */
+body.dark-mode .ec-blue { background-color: rgba(14, 165, 233, 0.1); border-color: rgba(14, 165, 233, 0.2); border-left-color: #0ea5e9; }
+body.dark-mode .ec-blue .ec-value { color: #38bdf8; }
+body.dark-mode .ec-red { background-color: rgba(239, 68, 68, 0.1); border-color: rgba(239, 68, 68, 0.2); border-left-color: #ef4444; }
+body.dark-mode .ec-red .ec-value { color: #f87171; }
+body.dark-mode .ec-orange { background-color: rgba(249, 115, 22, 0.1); border-color: rgba(249, 115, 22, 0.2); border-left-color: #f97316; }
+body.dark-mode .ec-orange .ec-value { color: #fb923c; }
+
+/* Timeline */
+.electric-timeline-container {
+    background: var(--bg-secondary);
+    padding: 24px;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    margin-bottom: 30px;
+}
+.electric-timeline-container h3 {
+    margin-bottom: 30px;
+    color: var(--text-primary);
+    font-size: 16px;
+    font-weight: 600;
+}
+.electric-timeline {
+    position: relative;
+    display: flex;
+    justify-content: space-between;
+    padding-bottom: 20px;
+}
+.timeline-line {
+    position: absolute;
+    top: 15px;
+    left: 40px;
+    right: 40px;
+    height: 2px;
+    background-color: var(--border-color);
+    z-index: 1;
+}
+.timeline-step {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+    width: 25%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.step-dot {
+    width: 32px;
+    height: 32px;
+    background-color: var(--bg-secondary);
+    border: 5px solid;
+    border-radius: 50%;
+    margin-bottom: 16px;
+    position: relative;
+}
+.step-dot::after {
+    content: '';
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: 8px; height: 8px;
+    border-radius: 50%;
+}
+.step-date { font-weight: 700; font-size: 13px; margin-bottom: 4px; }
+.step-title { font-size: 12px; font-weight: 600; margin-bottom: 8px; color: var(--text-primary); }
+.step-desc { font-size: 11px; color: var(--text-secondary); max-width: 80%; line-height: 1.4; }
+
+.step-green .step-dot { border-color: #22c55e; }
+.step-green .step-dot::after { background-color: #22c55e; }
+.step-green .step-date { color: #22c55e; }
+
+.step-blue .step-dot { border-color: #3b82f6; }
+.step-blue .step-dot::after { background-color: #3b82f6; }
+.step-blue .step-date { color: #3b82f6; }
+.highlight-blue { color: #3b82f6; font-weight: 600; }
+
+.step-yellow .step-dot { border-color: #eab308; }
+.step-yellow .step-dot::after { background-color: #eab308; }
+.step-yellow .step-date { color: #eab308; }
+
+.step-red .step-dot { border-color: #ef4444; }
+.step-red .step-dot::after { background-color: #ef4444; }
+.step-red .step-date { color: #ef4444; }
+
+.step-badge {
+    margin-top: 10px;
+    padding: 4px 8px;
+    border: 1px dashed #ef4444;
+    color: #ef4444;
+    font-size: 11px;
+    border-radius: 4px;
+    font-weight: 600;
+}
+
+/* Charts */
+.electric-charts-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-bottom: 30px;
+}
+.electric-chart-box {
+    background: var(--bg-secondary);
+    padding: 24px;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+}
+.electric-chart-box h3 {
+    text-align: center;
+    font-size: 14px;
+    color: var(--text-secondary);
+    margin-bottom: 20px;
+}
+
+/* Table */
+.electric-table-container {
+    background: var(--bg-secondary);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+    margin-bottom: 40px;
+}
+.electric-table-header {
+    background-color: #1e3a8a;
+    color: white;
+    padding: 16px 24px;
+    font-size: 14px;
+    font-weight: 600;
+}
+.electric-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+.electric-table th, .electric-table td {
+    padding: 16px 24px;
+    font-size: 13px;
+    border-bottom: 1px solid var(--border-color);
+}
+.electric-table th {
+    background-color: var(--bg-tertiary);
+    color: var(--text-secondary);
+    font-weight: 500;
+    text-align: left;
+}
+.td-month { color: var(--text-primary); font-weight: 600; }
+.td-amount, .td-rate, .td-total { text-align: right; }
+.td-amount { color: var(--text-secondary); }
+.td-rate { color: var(--text-secondary); text-align: center; }
+.td-total { color: #ef4444; font-weight: 600; }
+
+@media (max-width: 992px) {
+    .electric-charts-row { grid-template-columns: 1fr; }
+    .electric-timeline { flex-wrap: wrap; }
+    .timeline-step { width: 50%; margin-bottom: 20px; }
+    .timeline-line { display: none; }
+}
+
 .mitigation-title {
     font-size: 18px;
     font-weight: 700;

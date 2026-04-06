@@ -39,6 +39,9 @@
                 <a href="#" class="nav-item" data-type="impact">
                     <i class="fa-solid fa-chart-pie"></i> Scenario น้ำมัน
                 </a>
+                <a href="#" class="nav-item" data-type="electric">
+                    <i class="fa-solid fa-bolt"></i> Scenario ค่าไฟฟ้า
+                </a>
             </nav>
             <div class="theme-toggle" id="theme-toggle">
                 <i class="fa-solid fa-moon"></i>
@@ -48,10 +51,15 @@
 
         <!-- Main Content -->
         <main class="main-content">
-            <header class="header">
+            <header class="header" style="display: flex; justify-content: space-between; align-items: center;">
                 <div>
                     <h1>Overview</h1>
                     <p class="subtitle">Latest retail fuel prices in Southeast Asia</p>
+                </div>
+                <!-- Mock CHIA TAI Logo -->
+                <div id="chiatai-logo" style="display: none; align-items: center; gap: 8px;">
+                    <i class="fa-regular fa-circle-dot" style="color: #eab308; font-size: 28px;"></i>
+                    <span style="font-weight: 800; color: #eab308; letter-spacing: 1px; font-size: 20px;">CHIA TAI</span>
                 </div>
                 <div class="user-profile">
                     <span class="date-display" id="current-date">--</span>
@@ -178,10 +186,125 @@
                     </div>
                 </section>
             </div>
+
+            <!-- ELECTRICITY SCENARIO VIEW -->
+            <section id="electric-impact-view" style="display: none;">
+                <!-- Metrics -->
+                <div class="electric-metrics-row">
+                    <div class="electric-card ec-blue">
+                        <div class="ec-content">
+                            <h4>ยอดสะสมปริมาณการใช้ไฟฟ้าคาดการณ์</h4>
+                            <div class="ec-value">4,382,321.41 <span class="ec-unit">หน่วย</span></div>
+                            <div class="ec-sub">พ.ค. - ธ.ค. 2569</div>
+                        </div>
+                        <i class="fa-solid fa-bolt ec-icon"></i>
+                    </div>
+                    <div class="electric-card ec-red">
+                        <div class="ec-content">
+                            <h4>ส่วนต่างค่าไฟที่เพิ่มขึ้นรวม</h4>
+                            <div class="ec-value">423,912.68 <span class="ec-unit">บาท</span></div>
+                            <div class="ec-sub">พฤษภาคม - ธันวาคม</div>
+                        </div>
+                        <i class="fa-solid fa-comment-dollar ec-icon"></i>
+                    </div>
+                    <div class="electric-card ec-orange">
+                        <div class="ec-content">
+                            <h4>อัตราค่าไฟพื้นฐานเฉลี่ย</h4>
+                            <div class="ec-value">0.19 <span class="ec-unit">บาท/หน่วย</span></div>
+                            <div class="ec-sub">มาตรฐานอัตราค่าไฟปี 2569</div>
+                        </div>
+                        <i class="fa-solid fa-chart-line ec-icon"></i>
+                    </div>
+                </div>
+
+                <!-- Timeline -->
+                <div class="electric-timeline-container">
+                    <h3><i class="fa-regular fa-calendar"></i> Timeline การปรับค่าไฟฟ้า</h3>
+                    <div class="electric-timeline">
+                        <div class="timeline-line"></div>
+                        
+                        <div class="timeline-step step-green">
+                            <div class="step-dot"></div>
+                            <div class="step-date">1 เมษายน 2569</div>
+                            <div class="step-title">ประกาศอย่างเป็นทางการ</div>
+                            <div class="step-desc">กกพ. ประกาศอัตราค่าไฟฟ้า (Ft) อย่างเป็นทางการเพื่อส่งให้หน่วยงานที่เกี่ยวข้อง</div>
+                        </div>
+
+                        <div class="timeline-step step-blue">
+                            <div class="step-dot"></div>
+                            <div class="step-date">พฤษภาคม - สิงหาคม</div>
+                            <div class="step-title">เริ่มเก็บค่าไฟใหม่</div>
+                            <div class="step-desc">ส่วนต่างค่าไฟเพิ่มขึ้น <span class="highlight-blue">+0.07 บาท</span></div>
+                        </div>
+
+                        <div class="timeline-step step-yellow">
+                            <div class="step-dot"></div>
+                            <div class="step-date">ปลาย ก.ย. - ต.ค.</div>
+                            <div class="step-title">ประเมินต้นทุนใหม่ (ช่วงเฝ้าระวัง)</div>
+                            <div class="step-desc">กกพ. นำต้นทุนค่า ก๊าซ NG, พลังงานหมุนเวียน ประเมินค่า Ft งวดถัดไป</div>
+                        </div>
+
+                        <div class="timeline-step step-red">
+                            <div class="step-dot"></div>
+                            <div class="step-date">กันยายน - ธันวาคม</div>
+                            <div class="step-title">รอบบิลใหม่ (คาดการณ์)</div>
+                            <div class="step-desc">คาดการณ์จากผู้เชี่ยวชาญ/นักวิเคราะห์ คาดว่าส่วนต่าง...</div>
+                            <div class="step-badge">ค่าไฟทะลุเพิ่มขึ้น 0.12 บาท/หน่วย</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Charts -->
+                <section class="electric-charts-row">
+                    <div class="electric-chart-box">
+                        <h3>เปรียบเทียบส่วนต่างค่าไฟที่เพิ่มขึ้น (บาท)</h3>
+                        <div class="electric-canvas-wrapper" style="height: 250px;">
+                            <canvas id="electricBarChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="electric-chart-box">
+                        <h3>สัดส่วนปริมาณการใช้ไฟฟ้าคาดการณ์ (หน่วย)</h3>
+                        <div class="electric-canvas-wrapper" style="height: 250px; display: flex; justify-content: center;">
+                            <canvas id="electricDoughnutChart"></canvas>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Data Table -->
+                <div class="electric-table-container">
+                    <div class="electric-table-header">
+                        ตารางแสดงค่าไฟที่เพิ่มขึ้น ในกรณีค่าไฟฟ้าปรับเพิ่มตาม Timeline
+                    </div>
+                    <table class="electric-table">
+                        <thead>
+                            <tr>
+                                <th>ช่วงเวลา</th>
+                                <th style="text-align: right;">ปริมาณการใช้ไฟฟ้า<br>(หน่วย / UNITS)</th>
+                                <th style="text-align: center;">อัตราค่าไฟที่เพิ่มเพิ่มต่อหน่วย<br>(THB/หน่วย/UNIT)</th>
+                                <th style="text-align: right;">ส่วนต่างค่าไฟที่เพิ่มขึ้นรวม<br>(บาท / THB)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="td-month">พฤษภาคม - สิงหาคม</td>
+                                <td class="td-amount">2,039,317.83</td>
+                                <td class="td-rate">0.07 บาท</td>
+                                <td class="td-total"><i class="fa-solid fa-arrow-trend-up" style="color: #ef4444; margin-right:4px;"></i>142,752.25</td>
+                            </tr>
+                            <tr>
+                                <td class="td-month">กันยายน - ธันวาคม</td>
+                                <td class="td-amount">2,343,803.58</td>
+                                <td class="td-rate">0.12 บาท</td>
+                                <td class="td-total"><i class="fa-solid fa-arrow-trend-up" style="color: #ef4444; margin-right:4px;"></i>281,160.43</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
         </main>
     </div>
 
     <!-- Custom JavaScript -->
-    <script src="script.js?v=4"></script>
+    <script src="script.js?v=6"></script>
 </body>
 </html>

@@ -38,6 +38,8 @@ document.addEventListener('DOMContentLoaded', () => {
     let barChart;
     let impactBarChart;
     let impactComboChart;
+    let electricBarChart;
+    let electricDoughnutChart;
 
     // Register ChartDataLabels plugin globally
     if (typeof ChartDataLabels !== 'undefined') {
@@ -190,6 +192,71 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             });
         }
+
+        const ctxElectricBar = document.getElementById('electricBarChart');
+        if (ctxElectricBar) {
+            electricBarChart = new Chart(ctxElectricBar.getContext('2d'), {
+                type: 'bar',
+                data: {
+                    labels: ['พฤษภาคม - สิงหาคม', 'กันยายน - ธันวาคม'],
+                    datasets: [{
+                        data: [142752.25, 281160.43],
+                        backgroundColor: ['#3b82f6', '#ef4444'],
+                        borderRadius: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        datalabels: {
+                            anchor: 'end',
+                            align: 'top',
+                            formatter: (val) => val.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2}),
+                            font: { size: 10 },
+                            color: '#64748b'
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    if (value >= 1000) return value / 1000 + 'k';
+                                    return value;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        const ctxElectricDoughnut = document.getElementById('electricDoughnutChart');
+        if (ctxElectricDoughnut) {
+            electricDoughnutChart = new Chart(ctxElectricDoughnut.getContext('2d'), {
+                type: 'doughnut',
+                data: {
+                    labels: ['พฤษภาคม - สิงหาคม', 'กันยายน - ธันวาคม'],
+                    datasets: [{
+                        data: [2039317.83, 2343803.58],
+                        backgroundColor: ['#3b82f6', '#ef4444'],
+                        borderWidth: 0,
+                        hoverOffset: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: '70%',
+                    plugins: {
+                        legend: { position: 'bottom' },
+                        datalabels: { display: false }
+                    }
+                }
+            });
+        }
     }
 
     function renderDashboard(fuelType) {
@@ -265,12 +332,13 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // 5. Handle Navigation Tabs
-    const navItems = document.querySelectorAll('.nav-menu .nav-item');
     const overviewView = document.getElementById('overview-view');
-    const impactView = document.getElementById('impact-analysis-view');
+    const impactView = document.getElementById('impact-view');
+    const electricView = document.getElementById('electric-impact-view');
     const headerTitle = document.querySelector('.header h1');
     const headerSubtitle = document.querySelector('.header .subtitle');
 
+    const navItems = document.querySelectorAll('.nav-item');
     navItems.forEach(item => {
         item.addEventListener('click', (e) => {
             e.preventDefault();
@@ -279,15 +347,27 @@ document.addEventListener('DOMContentLoaded', () => {
             item.classList.add('active');
             
             const type = item.getAttribute('data-type');
+            const ctaiLogo = document.getElementById('chiatai-logo');
             
             if (type === 'impact') {
                 overviewView.style.display = 'none';
+                if(electricView) electricView.style.display = 'none';
                 impactView.style.display = 'block';
+                if(ctaiLogo) ctaiLogo.style.display = 'none';
                 headerTitle.textContent = 'Scenario น้ำมัน';
                 headerSubtitle.textContent = 'Impact evaluation of oil price adjustments';
+            } else if (type === 'electric') {
+                overviewView.style.display = 'none';
+                impactView.style.display = 'none';
+                if(electricView) electricView.style.display = 'block';
+                if(ctaiLogo) ctaiLogo.style.display = 'flex';
+                headerTitle.textContent = 'ค่าไฟฟ้า (Ft) ปี 2569 กรณีปรับราคาตามรัฐบาลประกาศ';
+                headerSubtitle.textContent = 'อ้างอิงจากการใช้จากปี 2568';
             } else if (fuelData[type]) {
                 overviewView.style.display = 'block';
                 impactView.style.display = 'none';
+                if(electricView) electricView.style.display = 'none';
+                if(ctaiLogo) ctaiLogo.style.display = 'none';
                 headerTitle.textContent = 'Overview';
                 headerSubtitle.textContent = 'Latest retail fuel prices in Southeast Asia';
                 
@@ -311,7 +391,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const textColor = isDark ? '#94a3b8' : '#64748b';
         const gridColor = isDark ? '#334155' : '#e2e8f0';
 
-        [trendChart, barChart, impactBarChart, impactComboChart].forEach(chart => {
+        [trendChart, barChart, impactBarChart, impactComboChart, electricBarChart].forEach(chart => {
             if (!chart) return;
             
             if (chart.options.scales.x) {
