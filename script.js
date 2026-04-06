@@ -381,10 +381,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 tr.innerHTML = `
                     <td>${row.date}</td>
+                    <td class="${cls(row.diesel)}">${fmt(row.diesel)}</td>
                     <td class="${cls(row.gasoline)}">${fmt(row.gasoline)}</td>
                     <td class="${cls(row.e20)}">${fmt(row.e20)}</td>
                     <td class="${cls(row.e85)}">${fmt(row.e85)}</td>
-                    <td class="${cls(row.diesel)}">${fmt(row.diesel)}</td>
                 `;
                 tbody.appendChild(tr);
             });
@@ -394,10 +394,10 @@ document.addEventListener('DOMContentLoaded', () => {
             totalTr.className = 'total-row';
             totalTr.innerHTML = `
                 <td>รวมทั้งหมด</td>
+                <td class="val-blue">${totalDiesel > 0 ? '+' : ''}${totalDiesel.toFixed(2)}</td>
                 <td>${totalGasoline > 0 ? '+' : ''}${totalGasoline.toFixed(2)}</td>
                 <td class="val-orange">${totalE20 > 0 ? '+' : ''}${totalE20.toFixed(2)}</td>
                 <td class="val-green">${totalE85 > 0 ? '+' : ''}${totalE85.toFixed(2)}</td>
-                <td class="val-blue">${totalDiesel > 0 ? '+' : ''}${totalDiesel.toFixed(2)}</td>
             `;
             tbody.appendChild(totalTr);
         }
