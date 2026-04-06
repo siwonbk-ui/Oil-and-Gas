@@ -283,7 +283,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (type === 'impact') {
                 overviewView.style.display = 'none';
                 impactView.style.display = 'block';
-                headerTitle.textContent = 'Scenario Analysis';
+                headerTitle.textContent = 'Scenario น้ำมัน';
                 headerSubtitle.textContent = 'Impact evaluation of oil price adjustments';
             } else if (fuelData[type]) {
                 overviewView.style.display = 'block';

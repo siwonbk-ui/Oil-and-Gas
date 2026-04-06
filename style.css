@@ -470,6 +470,41 @@ body {
 }
 
 /* Mitigation Plans */
+.impact-remark {
+    margin-top: -12px;
+    margin-bottom: 24px;
+    padding: 16px 20px;
+    background-color: var(--bg-tertiary);
+    border-radius: var(--radius-md);
+    border-left: 4px solid var(--text-secondary);
+}
+
+.impact-remark p {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 8px;
+}
+
+.impact-remark ul {
+    list-style: none;
+    font-size: 13px;
+    color: var(--text-secondary);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+
+.impact-remark ul li {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.remark-s1 { font-weight: 600; color: #ea580c; }
+.remark-s2 { font-weight: 600; color: #ea580c; }
+.remark-s3 { font-weight: 600; color: #b91c1c; }
+
 .impact-mitigation-row {
     margin-top: 32px;
 }
