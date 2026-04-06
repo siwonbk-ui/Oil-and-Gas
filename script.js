@@ -28,7 +28,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // 3. Data Structure initialization
     let fuelData = null;
-    let currentFuel = 'gasoline';
+    let currentFuel = 'trends-th';
 
     // 4. Initialization
     Chart.defaults.font.family = "'Inter', sans-serif";
@@ -526,11 +526,11 @@ document.addEventListener('DOMContentLoaded', () => {
             const type = item.getAttribute('data-type');
             
             if (type === 'trends-th') {
+                currentFuel = 'trends-th';
                 overviewView.style.display = 'none';
                 impactView.style.display = 'none';
                 if(electricView) electricView.style.display = 'none';
                 if(trendsThView) trendsThView.style.display = 'block';
-                // Hide main header as custom one is used within the view
                 document.querySelector('.header').style.display = 'none';
                 renderTrendsTH();
             } else if (type === 'impact') {
