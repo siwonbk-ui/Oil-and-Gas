@@ -325,6 +325,204 @@ body {
     width: 100%;
 }
 
+/* --- Scenario Analysis View Styles --- */
+.metrics-row {
+    display: flex;
+    gap: 24px;
+    margin-bottom: 32px;
+}
+
+.metric-card {
+    flex: 1;
+    background-color: var(--bg-secondary);
+    padding: 24px;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
+    border: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.metric-icon {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background-color: var(--bg-primary);
+    color: var(--accent-primary);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 24px;
+}
+
+.metric-card.alert {
+    border-left: 4px solid var(--color-th);
+}
+
+.metric-card.alert .metric-icon {
+    color: var(--color-th);
+    background-color: rgba(239, 68, 68, 0.1);
+}
+
+.metric-info h3 {
+    font-size: 14px;
+    color: var(--text-secondary);
+    font-weight: 500;
+    margin-bottom: 4px;
+}
+
+.metric-info p {
+    font-size: 24px;
+    font-weight: 700;
+}
+
+.metric-info p span {
+    font-size: 14px;
+    font-weight: 400;
+    color: var(--text-secondary);
+}
+
+.scenarios-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    margin-bottom: 32px;
+}
+
+.scenario-card {
+    background-color: var(--bg-secondary);
+    padding: 24px;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
+    border: 1px solid var(--border-color);
+    position: relative;
+    overflow: hidden;
+    transition: var(--transition);
+}
+
+.scenario-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg);
+}
+
+.scenario-card:nth-child(1) { border-top: 4px solid var(--color-my); }
+.scenario-card:nth-child(2) { border-top: 4px solid var(--color-sg); }
+.scenario-card:nth-child(3) { border-top: 4px solid var(--color-th); }
+
+.scenario-header {
+    font-weight: 600;
+    font-size: 18px;
+    margin-bottom: 16px;
+    color: var(--text-primary);
+}
+
+.scenario-price {
+    font-size: 32px;
+    font-weight: 700;
+    margin-bottom: 8px;
+}
+
+.scenario-price span {
+    font-size: 14px;
+    font-weight: 400;
+    color: var(--text-secondary);
+}
+
+.scenario-cost {
+    font-size: 16px;
+    color: var(--text-secondary);
+    margin-bottom: 8px;
+}
+
+.scenario-cost strong {
+    color: var(--text-primary);
+}
+
+.scenario-impact {
+    display: inline-block;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 16px;
+}
+
+.scenario-impact.danger {
+    background-color: rgba(239, 68, 68, 0.1);
+    color: var(--color-th);
+}
+
+.scenario-note {
+    font-size: 13px;
+    color: var(--color-th);
+    font-weight: 500;
+    background: rgba(239, 68, 68, 0.05);
+    padding: 8px;
+    border-radius: 6px;
+    margin-top: 8px;
+}
+
+.mitigation-plans {
+    background-color: var(--bg-secondary);
+    padding: 32px;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
+    border: 1px solid var(--border-color);
+}
+
+.mitigation-plans h2 {
+    font-size: 20px;
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.plan-list {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.plan-item {
+    display: flex;
+    gap: 16px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.plan-item:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+.plan-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    background-color: var(--bg-tertiary);
+    color: var(--accent-primary);
+    font-size: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.plan-text h4 {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 6px;
+    color: var(--text-primary);
+}
+
+.plan-text p {
+    font-size: 14px;
+    color: var(--text-secondary);
+    line-height: 1.5;
+}
+
 @media (max-width: 1024px) {
     .charts-section {
         grid-template-columns: 1fr;

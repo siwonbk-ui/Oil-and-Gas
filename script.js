@@ -144,6 +144,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // 5. Handle Navigation Tabs
     const navItems = document.querySelectorAll('.nav-menu .nav-item');
+    const overviewView = document.getElementById('overview-view');
+    const impactView = document.getElementById('impact-analysis-view');
+    const headerTitle = document.querySelector('.header h1');
+    const headerSubtitle = document.querySelector('.header .subtitle');
+
     navItems.forEach(item => {
         item.addEventListener('click', (e) => {
             e.preventDefault();
@@ -152,7 +157,18 @@ document.addEventListener('DOMContentLoaded', () => {
             item.classList.add('active');
             
             const type = item.getAttribute('data-type');
-            if (type && fuelData[type]) {
+            
+            if (type === 'impact') {
+                overviewView.style.display = 'none';
+                impactView.style.display = 'block';
+                headerTitle.textContent = 'Scenario Analysis';
+                headerSubtitle.textContent = 'Impact evaluation of oil price adjustments';
+            } else if (fuelData[type]) {
+                overviewView.style.display = 'block';
+                impactView.style.display = 'none';
+                headerTitle.textContent = 'Overview';
+                headerSubtitle.textContent = 'Latest retail fuel prices in Southeast Asia';
+                
                 currentFuel = type;
                 renderDashboard(type);
             }
