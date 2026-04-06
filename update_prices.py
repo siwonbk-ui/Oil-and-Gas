@@ -18,22 +18,46 @@ def save_data(data):
 
 def fetch_real_prices(data):
     """
-    STUB: In a real world scenario, you would implement web scraping 
-    or API calls here. e.g. querying EPPO Thailand or GlobalPetrolPrices.
-    For this automation demo, we simulate a slight market fluctuation.
+    Fetches real oil prices for Thailand via Bangchak API.
+    Other countries remain simulated for now.
     """
     from datetime import datetime, timezone, timedelta
+    import urllib.request
+    
     # Use UTC+7 (Thailand Time) to ensure the date matches the local time when the job runs at 05:00 AM
     tz = timezone(timedelta(hours=7))
     today = datetime.now(tz).strftime("%Y-%m-%d")
     data['last_updated'] = today
     
+    # Fetch actual Thailand prices from Bangchak API
+    thailand_real = {'gasoline': None, 'diesel': None}
+    try:
+        req = urllib.request.Request("https://www.bangchak.co.th/api/oilprice", headers={'User-Agent': 'Mozilla/5.0'})
+        with urllib.request.urlopen(req, timeout=10) as response:
+            if response.status == 200:
+                bc_data = json.loads(response.read().decode('utf-8'))
+                for item in bc_data.get('data', {}).get('items', []):
+                    if item.get('OilName') == 'แก๊สโซฮอล์ 95 S EVO':
+                        thailand_real['gasoline'] = item.get('PriceToday')
+                    elif item.get('OilName') == 'ไฮดีเซล S':
+                        thailand_real['diesel'] = item.get('PriceToday')
+    except Exception as e:
+        print(f"Failed to fetch Bangchak API: {e}")
+        # fallback to simulation if fails
+    
     for fuel_type in ['gasoline', 'diesel']:
         for i, card in enumerate(data[fuel_type]['cards']):
-            # Simulate a small price variation between -0.40 and +0.40 THB
-            change = round(random.uniform(-0.4, 0.4), 2)
-            card['price'] = round(card['price'] + change, 2)
-            card['change'] = f"{change:+.2f}"
+            
+            if card['code'] == 'TH' and thailand_real[fuel_type] is not None:
+                new_price = round(float(thailand_real[fuel_type]), 2)
+                change = round(new_price - card['price'], 2)
+                card['price'] = new_price
+                card['change'] = f"{change:+.2f}"
+            else:
+                # Simulate a small price variation between -0.40 and +0.40 THB
+                change = round(random.uniform(-0.4, 0.4), 2)
+                card['price'] = round(card['price'] + change, 2)
+                card['change'] = f"{change:+.2f}"
             
             if change > 0:
                 card['trend'] = 'up'
