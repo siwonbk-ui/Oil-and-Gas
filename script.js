@@ -108,8 +108,14 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         // Update Line Chart
-        trendChart.data.labels = dataSet.history.labels;
-        trendChart.data.datasets = dataSet.history.datasets;
+        const timeRangeSelect = document.getElementById('time-range');
+        const days = timeRangeSelect ? parseInt(timeRangeSelect.value) : 7;
+        
+        trendChart.data.labels = dataSet.history.labels.slice(-days);
+        trendChart.data.datasets = dataSet.history.datasets.map(dataset => ({
+            ...dataset,
+            data: dataset.data.slice(-days)
+        }));
         trendChart.update();
 
         // Update Bar Chart
@@ -152,6 +158,16 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     });
+
+    // 6. Handle Time Range Dropdown
+    const timeRangeSelect = document.getElementById('time-range');
+    if (timeRangeSelect) {
+        timeRangeSelect.addEventListener('change', () => {
+            if (fuelData && currentFuel) {
+                renderDashboard(currentFuel);
+            }
+        });
+    }
 
     function updateChartTheme() {
         const textColor = isDark ? '#94a3b8' : '#64748b';

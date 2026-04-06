@@ -46,6 +46,10 @@ def fetch_real_prices(data):
         # fallback to simulation if fails
     
     for fuel_type in ['gasoline', 'diesel']:
+        # Dynamically generate 30 dates for the labels
+        labels = [(datetime.now(tz) - timedelta(days=i)).strftime("%b %d") for i in range(29, -1, -1)]
+        data[fuel_type]['history']['labels'] = labels
+        
         for i, card in enumerate(data[fuel_type]['cards']):
             
             if card['code'] == 'TH' and thailand_real[fuel_type] is not None:
