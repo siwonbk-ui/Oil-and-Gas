@@ -794,6 +794,15 @@ body.dark-mode .ec-orange .ec-value { color: #fb923c; }
     .charts-section {
         grid-template-columns: 1fr;
     }
+    .impact-charts-row {
+        grid-template-columns: 1fr;
+    }
+    .impact-metrics-row {
+        grid-template-columns: 1fr;
+    }
+    .mitigation-grid {
+        grid-template-columns: 1fr;
+    }
 }
 
 @media (max-width: 768px) {
