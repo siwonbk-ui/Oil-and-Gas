@@ -326,6 +326,14 @@ document.addEventListener('DOMContentLoaded', () => {
         const trends = fuelData.trends_th;
         const tableData = trends.table_data;
 
+        // 0. Update Date Range Header
+        const dateRangeEl = document.getElementById('trends-date-range');
+        if (dateRangeEl && tableData.length > 0) {
+            const startDate = tableData[0].date;
+            const endDate = tableData[tableData.length - 1].date;
+            dateRangeEl.textContent = `สรุปข้อมูลตั้งแต่วันที่ ${startDate} - ${endDate}`;
+        }
+
         // 1. Update Metrics
         let totalGasoline = 0;
         let totalE20 = 0;
