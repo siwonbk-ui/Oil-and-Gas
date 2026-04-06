@@ -335,6 +335,40 @@ document.addEventListener('DOMContentLoaded', () => {
     // Initialize
     initCharts();
     
+    function updateScenarioStatus() {
+        if (!fuelData || !fuelData['diesel']) return;
+        
+        // Find TH Diesel price
+        const thDieselData = fuelData['diesel'].cards.find(c => c.code === 'TH');
+        if (!thDieselData) return;
+        
+        const price = thDieselData.price;
+        const statusText = document.getElementById('scenario-status-text');
+        const statusContainer = document.getElementById('scenario-status-container');
+        if (!statusText || !statusContainer) return;
+        
+        const icon = statusContainer.querySelector('i');
+        
+        let scenario = 0;
+        if (price >= 70) scenario = 3;
+        else if (price >= 60) scenario = 2;
+        else if (price >= 50) scenario = 1;
+        
+        if (scenario > 0) {
+            statusText.textContent = `เข้าสู่ Scenario ${scenario} แล้ว (ราคาจริงแตะ ${price.toFixed(2)} บ./ลิตร)`;
+            statusContainer.style.backgroundColor = 'rgba(239, 68, 68, 0.05)';
+            statusContainer.style.borderColor = 'rgba(239, 68, 68, 0.2)';
+            icon.className = 'fa-solid fa-triangle-exclamation';
+            icon.style.color = 'var(--color-th)';
+        } else {
+            statusText.textContent = `สถานการณ์ปกติ (ราคาจริงอยู่ที่ ${price.toFixed(2)} บ./ลิตร)`;
+            statusContainer.style.backgroundColor = 'rgba(16, 185, 129, 0.05)';
+            statusContainer.style.borderColor = 'rgba(16, 185, 129, 0.2)';
+            icon.className = 'fa-solid fa-circle-check';
+            icon.style.color = '#10b981';
+        }
+    }
+
     // Fetch data from external JSON file
     fetch('data.json')
         .then(response => {
@@ -351,6 +385,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 dateDisplay.textContent = `Updated: ${data.last_updated}`;
             }
             
+            updateScenarioStatus();
             renderDashboard(currentFuel);
         })
         .catch(error => {
