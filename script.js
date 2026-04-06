@@ -391,21 +391,23 @@ document.addEventListener('DOMContentLoaded', () => {
         const textColor = isDark ? '#94a3b8' : '#64748b';
         const gridColor = isDark ? '#334155' : '#e2e8f0';
 
-        [trendChart, barChart, impactBarChart, impactComboChart, electricBarChart].forEach(chart => {
+        [trendChart, barChart, impactBarChart, impactComboChart, electricBarChart, electricDoughnutChart].forEach(chart => {
             if (!chart) return;
             
-            if (chart.options.scales.x) {
-                chart.options.scales.x.grid.color = gridColor;
-                chart.options.scales.x.ticks.color = textColor;
+            if (chart.options.scales) {
+                if (chart.options.scales.x) {
+                    chart.options.scales.x.grid.color = gridColor;
+                    chart.options.scales.x.ticks.color = textColor;
+                }
+                if (chart.options.scales.y) {
+                    chart.options.scales.y.grid.color = gridColor;
+                    chart.options.scales.y.ticks.color = textColor;
+                }
+                if (chart.options.scales.y1) {
+                    chart.options.scales.y1.ticks.color = textColor;
+                }
             }
-            if (chart.options.scales.y) {
-                chart.options.scales.y.grid.color = gridColor;
-                chart.options.scales.y.ticks.color = textColor;
-            }
-            if (chart.options.scales.y1) {
-                chart.options.scales.y1.ticks.color = textColor;
-            }
-            if(chart.options.plugins.legend) {
+            if(chart.options.plugins && chart.options.plugins.legend) {
                 chart.options.plugins.legend.labels.color = textColor;
             }
             chart.update();
