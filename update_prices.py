@@ -22,7 +22,10 @@ def fetch_real_prices(data):
     or API calls here. e.g. querying EPPO Thailand or GlobalPetrolPrices.
     For this automation demo, we simulate a slight market fluctuation.
     """
-    today = datetime.date.today().strftime("%Y-%m-%d")
+    from datetime import datetime, timezone, timedelta
+    # Use UTC+7 (Thailand Time) to ensure the date matches the local time when the job runs at 05:00 AM
+    tz = timezone(timedelta(hours=7))
+    today = datetime.now(tz).strftime("%Y-%m-%d")
     data['last_updated'] = today
     
     for fuel_type in ['gasoline', 'diesel']:
