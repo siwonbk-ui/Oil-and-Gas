@@ -15,10 +15,11 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <!-- Custom CSS -->
-    <link rel="stylesheet" href="style.css?v=2">
+    <link rel="stylesheet" href="style.css?v=3">
     
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
 </head>
 <body>
     <div class="dashboard-container">
@@ -91,69 +92,79 @@
             </div>
 
             <!-- Scenario Analysis View -->
-            <div id="impact-analysis-view" style="display: none;">
-                <section class="metrics-row">
-                    <div class="metric-card">
-                        <div class="metric-icon"><i class="fa-solid fa-gas-pump"></i></div>
-                        <div class="metric-info">
-                            <h3>Base Oil Consumption</h3>
-                            <p>43,000 <span>Liters/Month</span></p>
+            <div id="impact-analysis-view" style="display: none; padding-bottom: 40px;">
+                <!-- Header Box -->
+                <section class="impact-super-header">
+                    <div class="impact-title-box">
+                        <div class="impact-title-icon"><i class="fa-solid fa-arrow-trend-up"></i></div>
+                        <div>
+                            <h2>การประเมินผลกระทบราคาน้ำมัน (Scenario Analysis)</h2>
+                            <p>คาดการณ์ค่าใช้จ่ายประจำเดือน เมษายน 2026 (อ้างอิงปริมาณการใช้ 43,000 ลิตร/เดือน)</p>
                         </div>
                     </div>
-                    <div class="metric-card alert">
-                        <div class="metric-icon alert-icon"><i class="fa-solid fa-arrow-trend-up"></i></div>
-                        <div class="metric-info">
-                            <h3>Estimated Monthly Cost Increase</h3>
-                            <p>+0.76 to 1.62 <span>Million THB/Month</span></p>
+                    <div class="impact-status-box">
+                        <i class="fa-solid fa-triangle-exclamation"></i>
+                        <div>
+                            <div class="status-label">CURRENT STATUS</div>
+                            <div class="status-text">เข้าสู่ Scenario 1 แล้ว (ราคาจริงแตะ 50.54 บ./ลิตร)</div>
                         </div>
                     </div>
                 </section>
 
-                <section class="scenarios-grid">
-                    <div class="scenario-card">
-                        <div class="scenario-header">Scenario 1</div>
-                        <div class="scenario-price">~50 <span>THB/Liter</span></div>
-                        <div class="scenario-cost">Total Cost <strong>2.15M THB</strong></div>
-                        <div class="scenario-impact danger">+54% increase</div>
-                        <p class="scenario-note">Current Status: ราคาจริงแตะ 50.54 บ./ลิตร แล้ว</p>
+                <!-- 3 Top Metrics -->
+                <section class="impact-metrics-row">
+                    <div class="im-card card-blue">
+                        <div class="im-label">ปริมาณการใช้น้ำมัน (Base)</div>
+                        <div class="im-value">43,000 <span>ลิตร/เดือน</span></div>
                     </div>
-                    <div class="scenario-card">
-                        <div class="scenario-header">Scenario 2</div>
-                        <div class="scenario-price">~60 <span>THB/Liter</span></div>
-                        <div class="scenario-cost">Total Cost <strong>2.58M THB</strong></div>
-                        <div class="scenario-impact danger">+85% increase</div>
+                    <div class="im-card card-orange">
+                        <div class="im-label">ช่วงราคาน้ำมันที่ประเมิน (Scenarios)</div>
+                        <div class="im-value">50 - 70 <span>บาท/ลิตร</span></div>
                     </div>
-                    <div class="scenario-card">
-                        <div class="scenario-header">Scenario 3</div>
-                        <div class="scenario-price">~70 <span>THB/Liter</span></div>
-                        <div class="scenario-cost">Total Cost <strong>3.01M THB</strong></div>
-                        <div class="scenario-impact danger">+116% increase</div>
+                    <div class="im-card card-red">
+                        <div class="im-label">ค่าน้ำมันที่คาดว่าจะเพิ่มขึ้น</div>
+                        <div class="im-value">+0.76 ถึง 1.62 <span>ลบ./เดือน</span></div>
                     </div>
                 </section>
 
-                <section class="mitigation-plans">
-                    <h2><i class="fa-solid fa-shield-halved"></i> Mitigation Plans (แผนรองรับ)</h2>
-                    <div class="plan-list">
-                        <div class="plan-item">
-                            <div class="plan-icon"><i class="fa-solid fa-car-burst"></i></div>
-                            <div class="plan-text">
-                                <h4>Operational (ควบคุมการใช้งาน)</h4>
-                                <p>All departments must strictly limit vehicle usage to strictly necessary and appropriate operations.</p>
-                            </div>
+                <!-- Charts Row -->
+                <section class="impact-charts-row">
+                    <!-- Left Bar Chart -->
+                    <div class="impact-chart-box">
+                        <h3>ค่าน้ำมันรถยนต์เฉลี่ยต่อเดือน (ล้านบาท)</h3>
+                        <div class="impact-canvas-wrapper">
+                            <canvas id="impactBarChart"></canvas>
                         </div>
-                        <div class="plan-item">
-                            <div class="plan-icon"><i class="fa-solid fa-wallet"></i></div>
-                            <div class="plan-text">
-                                <h4>Financial (บริหารสภาพคล่อง)</h4>
-                                <p>CSA/Treasury/P2P to request an increase in Fleet card credit limits and expedite payments to TTB. (Current limit: 3M THB nearing cap).</p>
-                            </div>
+                    </div>
+                    <!-- Right Combo Chart -->
+                    <div class="impact-chart-box">
+                        <h3>แนวโน้มราคา (บาท) และ ปริมาณการใช้ (ลิตร)</h3>
+                        <div class="impact-canvas-wrapper">
+                            <canvas id="impactComboChart"></canvas>
                         </div>
-                        <div class="plan-item">
-                            <div class="plan-icon"><i class="fa-solid fa-users"></i></div>
-                            <div class="plan-text">
-                                <h4>HR & FSC (ดูแลพนักงาน)</h4>
-                                <p>Adjusted vehicle mileage rates for employees using personal vehicles for business. (Current rate: 8 THB/Km).</p>
-                            </div>
+                    </div>
+                </section>
+
+                <!-- Mitigation Plans -->
+                <section class="impact-mitigation-row">
+                    <h3 class="mitigation-title"><i class="fa-regular fa-circle-check"></i> แผนรองรับกรณีค่าน้ำมันมีการปรับตัว</h3>
+                    <div class="mitigation-grid">
+                        <div class="mit-card">
+                            <div class="mit-number">1</div>
+                            <h4>ควบคุมการใช้งาน (Operational)</h4>
+                            <p>ทุกหน่วยงาน ใช้รถยนต์ในการปฏิบัติงานตามความเหมาะสมและจำเป็นอย่างเคร่งครัด</p>
+                        </div>
+                        <div class="mit-card">
+                            <div class="mit-number">2</div>
+                            <h4>บริหารสภาพคล่อง (Financial)</h4>
+                            <p>CSA/Treasury/P2P ขอเพิ่มวงเงิน Fleet card และจ่ายเงินให้ TTB เร็วขึ้น</p>
+                            <div class="mit-note"><i class="fa-solid fa-triangle-exclamation"></i> วงเงินปัจจุบัน 3 ล้านบาท (ใกล้เต็มเพดาน)</div>
+                        </div>
+                        <div class="mit-card">
+                            <div class="mit-number">3</div>
+                            <h4>ดูแลพนักงาน (HR & FSC)</h4>
+                            <p>ปรับเพิ่มอัตราค่าพาหนะเดินทาง/กิโลเมตร (Mileage) กรณีนำรถยนต์มาใช้ปฏิบัติงาน</p>
+                            <div class="mit-note"><i class="fa-solid fa-thumbtack" style="color:#ef4444;"></i> อัตราปัจจุบัน 8 บาท/กิโลเมตร</div>
                         </div>
                     </div>
                 </section>
@@ -162,6 +173,6 @@
     </div>
 
     <!-- Custom JavaScript -->
-    <script src="script.js?v=2"></script>
+    <script src="script.js?v=3"></script>
 </body>
 </html>

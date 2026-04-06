@@ -36,6 +36,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let trendChart;
     let barChart;
+    let impactBarChart;
+    let impactComboChart;
+
+    // Register ChartDataLabels plugin globally
+    if (typeof ChartDataLabels !== 'undefined') {
+        Chart.register(ChartDataLabels);
+    }
 
     const cardsContainer = document.getElementById('price-cards-container');
     const ctxTrend = document.getElementById('trendChart').getContext('2d');
@@ -49,7 +56,10 @@ document.addEventListener('DOMContentLoaded', () => {
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
-                plugins: { legend: { position: 'bottom' } },
+                plugins: { 
+                    legend: { position: 'bottom' },
+                    datalabels: { display: false }
+                },
                 scales: { 
                     y: { 
                         beginAtZero: false, 
@@ -65,9 +75,121 @@ document.addEventListener('DOMContentLoaded', () => {
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
-                plugins: { legend: { display: false } }
+                plugins: { 
+                    legend: { display: false },
+                    datalabels: { display: false }
+                }
             }
         });
+
+        const ctxImpactBar = document.getElementById('impactBarChart');
+        if (ctxImpactBar) {
+            impactBarChart = new Chart(ctxImpactBar.getContext('2d'), {
+                type: 'bar',
+                data: {
+                    labels: ["Jan '26", "Feb '26", "Mar '26", "Apr '26 (S1)", "Apr '26 (S2)", "Apr '26 (S3)"],
+                    datasets: [{
+                        data: [1.35, 1.42, 1.39, 2.15, 2.58, 3.01],
+                        backgroundColor: [
+                            '#1d4ed8', '#1d4ed8', '#1d4ed8', 
+                            '#f97316', '#ea580c', '#b91c1c'
+                        ],
+                        borderRadius: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { 
+                        legend: { display: false },
+                        datalabels: {
+                            anchor: 'end',
+                            align: 'top',
+                            formatter: (value, context) => {
+                                if (context.dataIndex === 3) return value + '\n(+54%)';
+                                if (context.dataIndex === 4) return value + '\n(+85%)';
+                                if (context.dataIndex === 5) return value + '\n(+116%)';
+                                return value;
+                            },
+                            font: { weight: 'bold', size: 11 },
+                            color: (context) => {
+                                return context.dataIndex >= 3 ? '#b91c1c' : '#1d4ed8';
+                            },
+                            textAlign: 'center'
+                        }
+                    },
+                    scales: { y: { beginAtZero: true, max: 4.0 } },
+                    animation: false
+                }
+            });
+        }
+
+        const ctxImpactCombo = document.getElementById('impactComboChart');
+        if (ctxImpactCombo) {
+            impactComboChart = new Chart(ctxImpactCombo.getContext('2d'), {
+                type: 'bar',
+                data: {
+                    labels: ["Jan '26", "Feb '26", "Mar '26", "Apr '26 (S1)", "Apr '26 (S2)", "Apr '26 (S3)"],
+                    datasets: [
+                        {
+                            type: 'line',
+                            label: 'ราคาเฉลี่ยต่อเดือน (บาท)',
+                            data: [30.3, 30.3, 32.5, 50, 60, 70],
+                            borderColor: '#ef4444',
+                            backgroundColor: '#ef4444',
+                            borderWidth: 2,
+                            tension: 0.1,
+                            yAxisID: 'y1',
+                            datalabels: {
+                                anchor: 'start',
+                                align: 'top',
+                                font: { weight: 'bold', size: 11 },
+                                color: '#ef4444'
+                            }
+                        },
+                        {
+                            type: 'bar',
+                            label: 'ปริมาณการใช้ (ลิตร)',
+                            data: [45000, 46800, 42900, 43000, 43000, 43000],
+                            backgroundColor: '#cbd5e1',
+                            yAxisID: 'y',
+                            datalabels: {
+                                anchor: 'center',
+                                align: 'center',
+                                formatter: (val) => (val/1000).toFixed(1) + 'k',
+                                font: { size: 10 },
+                                color: '#64748b'
+                            }
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'bottom' }
+                    },
+                    scales: {
+                        y: { 
+                            type: 'linear', 
+                            display: true, 
+                            position: 'left',
+                            title: { display: true, text: 'ปริมาณ (ลิตร)' },
+                            min: 0, max: 60000
+                        },
+                        y1: { 
+                            type: 'linear', 
+                            display: true, 
+                            position: 'right',
+                            title: { display: true, text: 'ราคา (บาท)' },
+                            min: 0, max: 80,
+                            grid: { drawOnChartArea: false }
+                        }
+                    },
+                    animation: false
+                }
+            });
+        }
     }
 
     function renderDashboard(fuelType) {
@@ -189,11 +311,20 @@ document.addEventListener('DOMContentLoaded', () => {
         const textColor = isDark ? '#94a3b8' : '#64748b';
         const gridColor = isDark ? '#334155' : '#e2e8f0';
 
-        [trendChart, barChart].forEach(chart => {
-            chart.options.scales.x.grid.color = gridColor;
-            chart.options.scales.y.grid.color = gridColor;
-            chart.options.scales.x.ticks.color = textColor;
-            chart.options.scales.y.ticks.color = textColor;
+        [trendChart, barChart, impactBarChart, impactComboChart].forEach(chart => {
+            if (!chart) return;
+            
+            if (chart.options.scales.x) {
+                chart.options.scales.x.grid.color = gridColor;
+                chart.options.scales.x.ticks.color = textColor;
+            }
+            if (chart.options.scales.y) {
+                chart.options.scales.y.grid.color = gridColor;
+                chart.options.scales.y.ticks.color = textColor;
+            }
+            if (chart.options.scales.y1) {
+                chart.options.scales.y1.ticks.color = textColor;
+            }
             if(chart.options.plugins.legend) {
                 chart.options.plugins.legend.labels.color = textColor;
             }
