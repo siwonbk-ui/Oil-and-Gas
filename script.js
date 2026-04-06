@@ -321,6 +321,120 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    function renderTrendsTH() {
+        if (!fuelData || !fuelData.trends_th) return;
+        const trends = fuelData.trends_th;
+        const tableData = trends.table_data;
+
+        // 1. Update Metrics
+        let totalGasoline = 0;
+        let totalE20 = 0;
+        let totalE85 = 0;
+        let totalDiesel = 0;
+        let peakValue = 0;
+        let peakDate = "";
+
+        tableData.forEach(row => {
+            totalGasoline += row.gasoline;
+            totalE20 += row.e20;
+            totalE85 += row.e85;
+            totalDiesel += row.diesel;
+
+            // Find peak in a single adjustment (any fuel)
+            const maxInRow = Math.max(Math.abs(row.gasoline), Math.abs(row.e20), Math.abs(row.e85), Math.abs(row.diesel));
+            if (maxInRow > peakValue) {
+                peakValue = maxInRow;
+                peakDate = row.date;
+            }
+        });
+
+        const mDiesel = document.getElementById('trends-metric-diesel');
+        const sDiesel = document.getElementById('trends-sub-diesel');
+        if (mDiesel) mDiesel.innerHTML = `${totalDiesel > 0 ? '+' : ''}${totalDiesel.toFixed(2)} <span>บ./ลิตร</span>`;
+        if (sDiesel) sDiesel.innerHTML = `<i class="fa-solid fa-arrow-trend-up"></i> จากการปรับเปลี่ยน ${tableData.length} ครั้ง`;
+
+        const mGasoline = document.getElementById('trends-metric-gasoline');
+        const sGasoline = document.getElementById('trends-sub-gasoline');
+        if (mGasoline) mGasoline.innerHTML = `${totalGasoline > 0 ? '+' : ''}${totalGasoline.toFixed(2)} <span>บ./ลิตร</span>`;
+        if (sGasoline) sGasoline.innerHTML = `<i class="fa-regular fa-calendar"></i> สะสมตั้งแต่ ${tableData[0].date}`;
+
+        const mRank = document.getElementById('trends-metric-rank');
+        const sRank = document.getElementById('trends-sub-rank');
+        if (mRank) mRank.innerHTML = `อันดับ 7 <span>จาก 10</span>`;
+        if (sRank) sRank.innerHTML = `<i class="fa-solid fa-circle-info"></i> ถูกกว่า ลาว พม่า กัมพูชา มาเลเซีย`;
+
+        const mPeak = document.getElementById('trends-metric-peak');
+        const sPeak = document.getElementById('trends-sub-peak');
+        if (mPeak) mPeak.innerHTML = `+${peakValue.toFixed(2)} <span>บ./ลิตร</span>`;
+        if (sPeak) sPeak.innerHTML = `<i class="fa-solid fa-triangle-exclamation"></i> เมื่อวันที่ ${peakDate}`;
+
+        // 2. Render Table
+        const tbody = document.getElementById('trends-table-tbody');
+        if (tbody) {
+            tbody.innerHTML = '';
+            tableData.forEach(row => {
+                const tr = document.createElement('tr');
+                if (Math.abs(row.gasoline) >= 5 || Math.abs(row.diesel) >= 5) tr.className = 'highlight-row';
+                
+                const fmt = (v) => v === 0 ? '-' : (v > 0 ? '+' : '') + v.toFixed(2);
+                const cls = (v) => v < 0 ? 'negative' : '';
+
+                tr.innerHTML = `
+                    <td>${row.date}</td>
+                    <td class="${cls(row.gasoline)}">${fmt(row.gasoline)}</td>
+                    <td class="${cls(row.e20)}">${fmt(row.e20)}</td>
+                    <td class="${cls(row.e85)}">${fmt(row.e85)}</td>
+                    <td class="${cls(row.diesel)}">${fmt(row.diesel)}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            // Total Row
+            const totalTr = document.createElement('tr');
+            totalTr.className = 'total-row';
+            totalTr.innerHTML = `
+                <td>รวมทั้งหมด</td>
+                <td>${totalGasoline > 0 ? '+' : ''}${totalGasoline.toFixed(2)}</td>
+                <td class="val-orange">${totalE20 > 0 ? '+' : ''}${totalE20.toFixed(2)}</td>
+                <td class="val-green">${totalE85 > 0 ? '+' : ''}${totalE85.toFixed(2)}</td>
+                <td class="val-blue">${totalDiesel > 0 ? '+' : ''}${totalDiesel.toFixed(2)}</td>
+            `;
+            tbody.appendChild(totalTr);
+        }
+
+        // 3. Update Charts
+        if (trendsLineChart) {
+            const labels = tableData.map(r => r.date);
+            
+            // Calculate cumulative sums for line chart
+            let sumG = 0, sumE20 = 0, sumE85 = 0, sumD = 0;
+            const dataG = [], dataE20 = [], dataE85 = [], dataD = [];
+
+            tableData.forEach(r => {
+                sumG += r.gasoline;
+                sumE20 += r.e20;
+                sumE85 += r.e85;
+                sumD += r.diesel;
+                dataG.push(sumG);
+                dataE20.push(sumE20);
+                dataE85.push(sumE85);
+                dataD.push(sumD);
+            });
+
+            trendsLineChart.data.labels = labels;
+            trendsLineChart.data.datasets[0].data = dataD;
+            trendsLineChart.data.datasets[1].data = dataG;
+            trendsLineChart.data.datasets[2].data = dataE20;
+            trendsLineChart.data.datasets[3].data = dataE85;
+            trendsLineChart.update();
+        }
+
+        if (trendsBarChart) {
+            trendsBarChart.data.datasets[0].data = [totalGasoline, totalE20, totalE85, totalDiesel];
+            trendsBarChart.update();
+        }
+    }
+
     function renderDashboard(fuelType) {
         const dataSet = fuelData[fuelType];
         
@@ -418,6 +532,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if(trendsThView) trendsThView.style.display = 'block';
                 // Hide main header as custom one is used within the view
                 document.querySelector('.header').style.display = 'none';
+                renderTrendsTH();
             } else if (type === 'impact') {
                 document.querySelector('.header').style.display = 'flex';
                 overviewView.style.display = 'none';
@@ -540,7 +655,11 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             
             updateScenarioStatus();
-            renderDashboard(currentFuel);
+            if (currentFuel === 'trends-th') {
+                renderTrendsTH();
+            } else {
+                renderDashboard(currentFuel);
+            }
         })
         .catch(error => {
             console.error('Error fetching data:', error);

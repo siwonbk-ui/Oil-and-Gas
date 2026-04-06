@@ -86,26 +86,26 @@
                     <!-- Card 1 -->
                     <div class="tr-card border-blue">
                         <div class="tr-label"><i class="fa-solid fa-droplet"></i> ยอดปรับขึ้น ดีเซลรวม</div>
-                        <div class="tr-value value-red">+20.60 <span>บ./ลิตร</span></div>
-                        <div class="tr-sub"><i class="fa-solid fa-arrow-trend-up"></i> จากการปรับขึ้นทั้งหมด 8 ครั้ง</div>
+                        <div class="tr-value value-red" id="trends-metric-diesel">-- <span>บ./ลิตรอ</span></div>
+                        <div class="tr-sub" id="trends-sub-diesel"><i class="fa-solid fa-arrow-trend-up"></i> --</div>
                     </div>
                     <!-- Card 2 -->
                     <div class="tr-card border-yellow">
                         <div class="tr-label"><i class="fa-solid fa-droplet"></i> ยอดปรับขึ้น เบนซิน/แก๊สโซฮอล์รวม</div>
-                        <div class="tr-value value-red">+12.90 <span>บ./ลิตร</span></div>
-                        <div class="tr-sub"><i class="fa-regular fa-calendar"></i> สะสมตั้งแต่ 18 มี.ค. เป็นต้นมา</div>
+                        <div class="tr-value value-red" id="trends-metric-gasoline">-- <span>บ./ลิตรอ</span></div>
+                        <div class="tr-sub" id="trends-sub-gasoline"><i class="fa-regular fa-calendar"></i> --</div>
                     </div>
                     <!-- Card 3 -->
                     <div class="tr-card border-green">
                         <div class="tr-label"><i class="fa-solid fa-globe"></i> อันดับราคา ดีเซล ในอาเซียน</div>
-                        <div class="tr-value value-black">อันดับ 7 <span>จาก 10</span></div>
-                        <div class="tr-sub"><i class="fa-solid fa-circle-info"></i> ถูกกว่า ลาว พม่า กัมพูชา มาเลเซีย</div>
+                        <div class="tr-value value-black" id="trends-metric-rank">-- <span>จาก 10</span></div>
+                        <div class="tr-sub" id="trends-sub-rank"><i class="fa-solid fa-circle-info"></i> --</div>
                     </div>
                     <!-- Card 4 -->
                     <div class="tr-card border-red">
                         <div class="tr-label"><i class="fa-solid fa-triangle-exclamation"></i> การปรับขึ้นแรงสุด (ต่อครั้ง)</div>
-                        <div class="tr-value value-red">+6.00 <span>บ./ลิตร</span></div>
-                        <div class="tr-sub"><i class="fa-solid fa-triangle-exclamation"></i> เมื่อวันที่ 26 มี.ค. 69 (ทุกชนิด)</div>
+                        <div class="tr-value value-red" id="trends-metric-peak">-- <span>บ./ลิตรอ</span></div>
+                        <div class="tr-sub" id="trends-sub-peak"><i class="fa-solid fa-triangle-exclamation"></i> --</div>
                     </div>
                 </section>
 
@@ -141,70 +141,8 @@
                                 <th style="text-align: center;">ดีเซลธรรมดา</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            <tr>
-                                <td>18 มี.ค. 69</td>
-                                <td>+1.00</td>
-                                <td class="negative">-0.79</td>
-                                <td class="negative">-2.00</td>
-                                <td>+0.50</td>
-                            </tr>
-                            <tr>
-                                <td>21 มี.ค. 69</td>
-                                <td>+1.00</td>
-                                <td>+1.00</td>
-                                <td>+1.00</td>
-                                <td>+0.70</td>
-                            </tr>
-                            <tr>
-                                <td>24 มี.ค. 69</td>
-                                <td>+2.00</td>
-                                <td>+2.00</td>
-                                <td>+2.00</td>
-                                <td>+1.80</td>
-                            </tr>
-                            <tr class="highlight-row">
-                                <td>*** 26 มี.ค. 69</td>
-                                <td>+6.00</td>
-                                <td>+6.00</td>
-                                <td>+6.00</td>
-                                <td>+6.00</td>
-                            </tr>
-                            <tr>
-                                <td>31 มี.ค. 69</td>
-                                <td>+1.00</td>
-                                <td>+1.00</td>
-                                <td>+1.00</td>
-                                <td>+1.80</td>
-                            </tr>
-                            <tr>
-                                <td>2 เม.ย. 69</td>
-                                <td>+1.20</td>
-                                <td>+1.20</td>
-                                <td>+1.20</td>
-                                <td>+3.50</td>
-                            </tr>
-                            <tr>
-                                <td>3 เม.ย. 69</td>
-                                <td>+0.70</td>
-                                <td>+0.70</td>
-                                <td>+0.70</td>
-                                <td>+3.50</td>
-                            </tr>
-                            <tr>
-                                <td>5 เม.ย. 69</td>
-                                <td>-</td>
-                                <td>-</td>
-                                <td>-</td>
-                                <td>+2.80</td>
-                            </tr>
-                            <tr class="total-row">
-                                <td>รวมทั้งหมด</td>
-                                <td>+12.90</td>
-                                <td class="val-orange">+11.11</td>
-                                <td class="val-green">+9.90</td>
-                                <td class="val-blue">+20.60</td>
-                            </tr>
+                        <tbody id="trends-table-tbody">
+                            <!-- Rows will be generated by JS -->
                         </tbody>
                     </table>
                 </div>
