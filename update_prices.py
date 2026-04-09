@@ -68,18 +68,18 @@ def fetch_singapore_prices(rates):
     return prices
 
 def fetch_eppo_prices():
-    """Scrapes ASEAN oil prices from EPPO iframe source"""
-    # The data is actually in an iframe on the homepage
+    """Fetches ASEAN oil prices from EPPO legacy source (matches Tableau data)"""
     url = "https://www.eppo.go.th/graph/main.php?mini=1"
     try:
         req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0'})
         with urllib.request.urlopen(req, timeout=15) as response:
-            html = response.read().decode('utf-8')
+            content = response.read()
+            # Handle encoding (usually cp874)
+            try:
+                html = content.decode('utf-8')
+            except:
+                html = content.decode('cp874', errors='ignore')
             
-            # Target the tab-6 section if it exists
-            if 'id="tabs-6"' in html:
-                html = html.split('id="tabs-6"')[1]
-
             # Map Thai names to country codes
             country_map = {
                 'สิงคโปร์': 'SG',
@@ -98,14 +98,14 @@ def fetch_eppo_prices():
             for code in country_map.values():
                 extracted[code] = {'gasoline': None, 'diesel': None}
             
-            def parse_table_content(table_html, fuel_type):
-                rows = re.findall(r'<tr[^>]*>(.*?)</tr>', table_html, re.DOTALL)
+            def parse_section(section_html, fuel_type):
+                # Look for rows: <td>Country</td><td>Price</td>
+                rows = re.findall(r'<tr[^>]*>(.*?)</tr>', section_html, re.DOTALL)
                 for row in rows:
                     tds = re.findall(r'<td[^>]*>(.*?)</td>', row, re.DOTALL)
-                    cells = [re.sub(r'<.*?>', '', c).strip() for c in tds]
-                    if len(cells) >= 2:
-                        c_name = cells[0].replace('*', '').strip()
-                        c_price = cells[1].replace(',', '').strip()
+                    if len(tds) >= 2:
+                        c_name = re.sub(r'<.*?>', '', tds[0]).replace('*', '').strip()
+                        c_price = re.sub(r'<.*?>', '', tds[1]).replace(',', '').strip()
                         if c_name in country_map:
                             c_code = country_map[c_name]
                             try:
@@ -114,21 +114,27 @@ def fetch_eppo_prices():
                                     extracted[c_code][fuel_type] = val
                             except: pass
 
-            # Split by fuel headers in the iframe content
+            # Split by headers
+            gas_part = ""
+            die_part = ""
+            
             gas_idx = html.find('เบนซิน')
             die_idx = html.find('ดีเซล')
             
             if gas_idx != -1 and die_idx != -1:
                 if gas_idx < die_idx:
-                    parse_table_content(html[gas_idx:die_idx], 'gasoline')
-                    parse_table_content(html[die_idx:], 'diesel')
+                    gas_part = html[gas_idx:die_idx]
+                    die_part = html[die_idx:]
                 else:
-                    parse_table_content(html[die_idx:gas_idx], 'diesel')
-                    parse_table_content(html[gas_idx:], 'gasoline')
+                    die_part = html[die_idx:gas_idx]
+                    gas_part = html[gas_idx:]
+                
+                parse_section(gas_part, 'gasoline')
+                parse_section(die_part, 'diesel')
             
-            return {k: v for k, v in extracted.items() if v['gasoline'] or v['diesel']}
+            return {k: v for k, v in extracted.items() if v['gasoline'] is not None or v['diesel'] is not None}
     except Exception as e:
-        print(f"EPPO fetch failed: {e}")
+        print(f"EPPO legacy fetch failed: {e}")
     return {}
 
 def fetch_real_prices(data):
