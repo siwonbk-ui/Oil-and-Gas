@@ -46,7 +46,11 @@
                     <i class="fa-solid fa-bolt"></i> Scenario ค่าไฟฟ้า
                 </a>
             </nav>
-            <div class="theme-toggle" id="theme-toggle">
+            <div class="nav-item" id="nav-reference" data-type="reference" style="margin-top: auto; cursor: pointer;">
+                <i class="fa-solid fa-circle-info"></i>
+                <span>Reference</span>
+            </div>
+            <div class="theme-toggle" id="theme-toggle" style="margin-top: 0;">
                 <i class="fa-solid fa-moon"></i>
                 <span>Dark Mode</span>
             </div>
@@ -380,6 +384,63 @@
                             </tr>
                         </tbody>
                     </table>
+                </div>
+            </section>
+
+            <!-- REFERENCE VIEW -->
+            <section id="reference-view" style="display: none;">
+                <div class="reference-container">
+                    <header class="reference-header">
+                        <h2>แหล่งอ้างอิงข้อมูล (Data Sources)</h2>
+                        <p>ข้อมูลที่นำมาแสดงทั้งหมดอ้างอิงจากแหล่งข้อมูลที่น่าเชื่อถือและตรวจสอบได้</p>
+                    </header>
+
+                    <div class="reference-grid">
+                        <!-- Fuel Prices -->
+                        <div class="ref-card">
+                            <div class="ref-icon fuel"><i class="fa-solid fa-gas-pump"></i></div>
+                            <h3>ราคาน้ำมันในประเทศไทย</h3>
+                            <ul>
+                                <li><strong>Thai Oil</strong>: บริษัท ไทยออยล์ จำกัด (มหาชน)</li>
+                                <li><strong>Bangchak</strong>: บริษัท บางจาก คอร์ปอเรชั่น จำกัด (มหาชน)</li>
+                                <li><strong>PTT Station</strong>: บริษัท ปตท. น้ำมันและการค้าปลีก จำกัด (มหาชน)</li>
+                            </ul>
+                        </div>
+
+                        <!-- ASEAN Prices -->
+                        <div class="ref-card">
+                            <div class="ref-icon globe"><i class="fa-solid fa-globe"></i></div>
+                            <h3>ราคาน้ำมันในอาเซียน</h3>
+                            <ul>
+                                <li><strong>EPPO</strong>: สำนักงานนโยบายและแผนพลังงาน (สนพ.) กระทรวงพลังงาน</li>
+                                <li><strong>Global Petrol Prices</strong>: ข้อมูลเปรียบเทียบราคาในระดับสากล</li>
+                            </ul>
+                        </div>
+
+                        <!-- Electricity -->
+                        <div class="ref-card">
+                            <div class="ref-icon bolt"><i class="fa-solid fa-bolt"></i></div>
+                            <h3>ค่าไฟในประเทศไทย</h3>
+                            <ul>
+                                <li><strong>MEA</strong>: การไฟฟ้านครหลวง</li>
+                                <li><strong>PEA</strong>: การไฟฟ้าส่วนภูมิภาค</li>
+                                <li><strong>EGAT</strong>: การไฟฟ้าฝ่ายผลิตแห่งประเทศไทย</li>
+                            </ul>
+                        </div>
+
+                        <!-- Analysis -->
+                        <div class="ref-card">
+                            <div class="ref-icon chart"><i class="fa-solid fa-chart-line" style="color: #8b5cf6;"></i></div>
+                            <h3 style="color: var(--text-primary);">การวิเคราะห์และคาดการณ์</h3>
+                            <ul>
+                                <li><strong>FSC</strong>: Scenario น้ำมัน (Internal Financial Analysis)</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="reference-footer">
+                        <p><i class="fa-solid fa-clock-rotate-left"></i> ความถี่การอัปเดต: ข้อมูลราคาน้ำมันอัปเดตทุกวัน อ้างอิงตามประกาศการปรับราคา</p>
+                    </div>
                 </div>
             </section>
         </main>

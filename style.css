@@ -1070,3 +1070,114 @@ body.dark-mode .ec-orange .ec-value { color: #fb923c; }
         box-shadow: 2px 0 5px rgba(0,0,0,0.05);
     }
 }
+
+/* --- Reference View Styles --- */
+.reference-container {
+    max-width: 1000px;
+    margin: 40px auto;
+}
+
+.reference-header {
+    margin-bottom: 40px;
+    text-align: center;
+}
+
+.reference-header h2 {
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 12px;
+}
+
+.reference-header p {
+    color: var(--text-secondary);
+    font-size: 16px;
+}
+
+.reference-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 24px;
+    margin-bottom: 40px;
+}
+
+.ref-card {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    padding: 32px;
+    box-shadow: var(--shadow-md);
+    transition: var(--transition);
+}
+
+.ref-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-lg);
+}
+
+.ref-icon {
+    width: 56px;
+    height: 56px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    margin-bottom: 20px;
+}
+
+.ref-icon.fuel { background-color: rgba(239, 68, 68, 0.1); color: #ef4444; }
+.ref-icon.globe { background-color: rgba(59, 130, 246, 0.1); color: #3b82f6; }
+.ref-icon.bolt { background-color: rgba(249, 115, 22, 0.1); color: #f97316; }
+.ref-icon.chart { background-color: rgba(139, 92, 246, 0.1); color: #8b5cf6; }
+
+.ref-card h3 {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 16px;
+    color: var(--text-primary);
+}
+
+.ref-card ul {
+    list-style: none;
+    padding: 0;
+}
+
+.ref-card ul li {
+    font-size: 14px;
+    color: var(--text-secondary);
+    margin-bottom: 12px;
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+}
+
+.ref-card ul li strong {
+    color: var(--text-primary);
+    min-width: 90px;
+    flex-shrink: 0;
+}
+
+.reference-footer {
+    background: var(--bg-tertiary);
+    padding: 20px;
+    border-radius: var(--radius-md);
+    text-align: center;
+    color: var(--text-secondary);
+    font-size: 14px;
+    border: 1px dashed var(--border-color);
+}
+
+.reference-footer i {
+    margin-right: 8px;
+    color: var(--accent-primary);
+}
+
+#nav-reference i {
+    font-size: 18px;
+}
+
+#nav-reference.active i {
+    color: white;
+}
+

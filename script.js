@@ -528,6 +528,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const impactView = document.getElementById('impact-view');
     const electricView = document.getElementById('electric-impact-view');
     const trendsThView = document.getElementById('trends-th-view');
+    const referenceView = document.getElementById('reference-view');
     const headerTitle = document.querySelector('.header h1');
     const headerSubtitle = document.querySelector('.header .subtitle');
 
@@ -547,6 +548,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 impactView.style.display = 'none';
                 if(electricView) electricView.style.display = 'none';
                 if(trendsThView) trendsThView.style.display = 'block';
+                if(referenceView) referenceView.style.display = 'none';
                 document.querySelector('.header').style.display = 'none';
                 renderTrendsTH();
             } else if (type === 'impact') {
@@ -554,6 +556,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 overviewView.style.display = 'none';
                 if(electricView) electricView.style.display = 'none';
                 if(trendsThView) trendsThView.style.display = 'none';
+                if(referenceView) referenceView.style.display = 'none';
                 impactView.style.display = 'block';
                 headerTitle.textContent = 'Scenario น้ำมัน';
                 headerSubtitle.textContent = 'Impact evaluation of oil price adjustments';
@@ -562,15 +565,26 @@ document.addEventListener('DOMContentLoaded', () => {
                 overviewView.style.display = 'none';
                 impactView.style.display = 'none';
                 if(trendsThView) trendsThView.style.display = 'none';
+                if(referenceView) referenceView.style.display = 'none';
                 if(electricView) electricView.style.display = 'block';
                 headerTitle.textContent = 'ค่าไฟฟ้า (Ft) ปี 2569 กรณีปรับราคาตามรัฐบาลประกาศ';
                 headerSubtitle.textContent = 'อ้างอิงจากการใช้จากปี 2568';
+            } else if (type === 'reference') {
+                document.querySelector('.header').style.display = 'flex';
+                overviewView.style.display = 'none';
+                impactView.style.display = 'none';
+                if(electricView) electricView.style.display = 'none';
+                if(trendsThView) trendsThView.style.display = 'none';
+                if(referenceView) referenceView.style.display = 'block';
+                headerTitle.textContent = 'แหล่งอ้างอิงข้อมูล';
+                headerSubtitle.textContent = 'ตรวจสอบแหล่งที่มาของข้อมูลราคาน้ำมันและค่าไฟฟ้า';
             } else if (fuelData && fuelData[type]) {
                 document.querySelector('.header').style.display = 'flex';
                 overviewView.style.display = 'block';
                 impactView.style.display = 'none';
                 if(electricView) electricView.style.display = 'none';
                 if(trendsThView) trendsThView.style.display = 'none';
+                if(referenceView) referenceView.style.display = 'none';
                 headerTitle.textContent = 'Overview';
                 headerSubtitle.textContent = 'Latest retail fuel prices in Southeast Asia';
                 
