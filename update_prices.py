@@ -68,69 +68,52 @@ def fetch_singapore_prices(rates):
     return prices
 
 def fetch_eppo_prices():
-    """Fetches ASEAN oil prices from EPPO legacy source (matches Tableau data)"""
+    """Fetches ASEAN oil prices from EPPO legacy source using robust positional mapping"""
     url = "https://www.eppo.go.th/graph/main.php?mini=1"
     try:
         req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0'})
         with urllib.request.urlopen(req, timeout=15) as response:
             content = response.read()
-            # Handle encoding (usually cp874)
-            try:
-                html = content.decode('utf-8')
-            except:
-                html = content.decode('cp874', errors='ignore')
+            # Positional mapping is robust against encoding issues
+            html = content.decode('cp874', errors='ignore')
             
-            # Map Thai names to country codes
-            country_map = {
-                'สิงคโปร์': 'SG',
-                'เมียนมา': 'MM',
-                'ลาว': 'LA',
-                'กัมพูชา': 'KH',
-                'ฟิลิปปินส์': 'PH',
-                'ไทย': 'TH',
-                'เวียดนาม': 'VN',
-                'มาเลเซีย': 'MY',
-                'อินโดนีเซีย': 'ID',
-                'บรูไน': 'BN'
-            }
+            # Country codes in the order they appear in the EPPO tables
+            # Gasoline table order: SG, MM, LA, KH, PH, TH, VN, MY, ID, BN
+            gasoline_order = ['SG', 'MM', 'LA', 'KH', 'PH', 'TH', 'VN', 'MY', 'ID', 'BN']
+            # Diesel table order: SG, MM, LA, PH, KH, VN, TH, MY, ID, BN (verified from official image)
+            diesel_order = ['SG', 'MM', 'LA', 'PH', 'KH', 'VN', 'TH', 'MY', 'ID', 'BN']
             
             extracted = {}
-            for code in country_map.values():
+            for code in set(gasoline_order + diesel_order):
                 extracted[code] = {'gasoline': None, 'diesel': None}
             
-            def parse_section(section_html, fuel_type):
-                # Look for rows: <td>Country</td><td>Price</td>
-                rows = re.findall(r'<tr[^>]*>(.*?)</tr>', section_html, re.DOTALL)
-                for row in rows:
-                    tds = re.findall(r'<td[^>]*>(.*?)</td>', row, re.DOTALL)
-                    if len(tds) >= 2:
-                        c_name = re.sub(r'<.*?>', '', tds[0]).replace('*', '').strip()
-                        c_price = re.sub(r'<.*?>', '', tds[1]).replace(',', '').strip()
-                        if c_name in country_map:
-                            c_code = country_map[c_name]
-                            try:
-                                val = float(c_price)
-                                if extracted[c_code][fuel_type] is None:
-                                    extracted[c_code][fuel_type] = val
-                            except: pass
-
-            # Split by headers
-            gas_part = ""
-            die_part = ""
+            # Extract all rows with exactly 2 columns where the second column is a number
+            rows = re.findall(r'<tr[^>]*>(.*?)</tr>', html, re.DOTALL)
+            data_rows = []
+            for row in rows:
+                tds = re.findall(r'<td[^>]*>(.*?)</td>', row, re.DOTALL)
+                clean_tds = [re.sub(r'<.*?>', '', td).replace('*', '').strip() for td in tds]
+                if len(clean_tds) == 2:
+                    # Check if second column is a price (digit + optional dot)
+                    price_str = clean_tds[1].replace(',', '').strip()
+                    if price_str.replace('.', '').isdigit() and len(price_str) > 0:
+                        data_rows.append(price_str)
             
-            gas_idx = html.find('เบนซิน')
-            die_idx = html.find('ดีเซล')
-            
-            if gas_idx != -1 and die_idx != -1:
-                if gas_idx < die_idx:
-                    gas_part = html[gas_idx:die_idx]
-                    die_part = html[die_idx:]
-                else:
-                    die_part = html[die_idx:gas_idx]
-                    gas_part = html[gas_idx:]
+            # Usually there are 20 data points (10 Gasoline, 10 Diesel)
+            if len(data_rows) >= 20:
+                # Map Gasoline (first 10)
+                for i in range(10):
+                    code = gasoline_order[i]
+                    try:
+                        extracted[code]['gasoline'] = float(data_rows[i])
+                    except: pass
                 
-                parse_section(gas_part, 'gasoline')
-                parse_section(die_part, 'diesel')
+                # Map Diesel (next 10)
+                for i in range(10):
+                    code = diesel_order[i]
+                    try:
+                        extracted[code]['diesel'] = float(data_rows[10 + i])
+                    except: pass
             
             return {k: v for k, v in extracted.items() if v['gasoline'] is not None or v['diesel'] is not None}
     except Exception as e:
