@@ -1,12 +1,13 @@
 import json
 import random
-import datetime
+from datetime import datetime, timezone, timedelta
 import urllib.request
 import os
 import re
 
 # This script fetches real prices via API/Scraping and updates data.json
 FILE_PATH = 'data.json'
+tz = timezone(timedelta(hours=7))
 
 def load_data():
     if not os.path.exists(FILE_PATH):
@@ -74,45 +75,33 @@ def fetch_eppo_prices():
         req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0'})
         with urllib.request.urlopen(req, timeout=15) as response:
             content = response.read()
-            # Positional mapping is robust against encoding issues
             html = content.decode('cp874', errors='ignore')
             
-            # Country codes in the order they appear in the EPPO tables
-            # Gasoline table order: SG, MM, LA, KH, PH, TH, VN, MY, ID, BN
             gasoline_order = ['SG', 'MM', 'LA', 'KH', 'PH', 'TH', 'VN', 'MY', 'ID', 'BN']
-            # Diesel table order: SG, MM, LA, PH, KH, VN, TH, MY, ID, BN (verified from official image)
             diesel_order = ['SG', 'MM', 'LA', 'PH', 'KH', 'VN', 'TH', 'MY', 'ID', 'BN']
             
             extracted = {}
             for code in set(gasoline_order + diesel_order):
                 extracted[code] = {'gasoline': None, 'diesel': None}
             
-            # Extract all rows with exactly 2 columns where the second column is a number
             rows = re.findall(r'<tr[^>]*>(.*?)</tr>', html, re.DOTALL)
             data_rows = []
             for row in rows:
                 tds = re.findall(r'<td[^>]*>(.*?)</td>', row, re.DOTALL)
                 clean_tds = [re.sub(r'<.*?>', '', td).replace('*', '').strip() for td in tds]
                 if len(clean_tds) == 2:
-                    # Check if second column is a price (digit + optional dot)
                     price_str = clean_tds[1].replace(',', '').strip()
                     if price_str.replace('.', '').isdigit() and len(price_str) > 0:
                         data_rows.append(price_str)
             
-            # Usually there are 20 data points (10 Gasoline, 10 Diesel)
             if len(data_rows) >= 20:
-                # Map Gasoline (first 10)
                 for i in range(10):
                     code = gasoline_order[i]
-                    try:
-                        extracted[code]['gasoline'] = float(data_rows[i])
+                    try: extracted[code]['gasoline'] = float(data_rows[i])
                     except: pass
-                
-                # Map Diesel (next 10)
                 for i in range(10):
                     code = diesel_order[i]
-                    try:
-                        extracted[code]['diesel'] = float(data_rows[10 + i])
+                    try: extracted[code]['diesel'] = float(data_rows[10 + i])
                     except: pass
             
             return {k: v for k, v in extracted.items() if v['gasoline'] is not None or v['diesel'] is not None}
@@ -120,19 +109,59 @@ def fetch_eppo_prices():
         print(f"EPPO legacy fetch failed: {e}")
     return {}
 
-def fetch_real_prices(data):
-    from datetime import datetime, timezone, timedelta
+def fetch_thai_prices():
+    """Fetches Thai oil prices with fallback logic (Primary: chnwt.dev, Secondary: BCP v2)"""
+    res = {'gasoline': None, 'diesel': None, 'e20': None, 'e85': None}
     
-    tz = timezone(timedelta(hours=7))
+    # 1. Primary: Thai Oil API (chnwt.dev)
+    try:
+        req = urllib.request.Request("https://api.chnwt.dev/thai-oil-api/latest", headers={'User-Agent': 'Mozilla/5.0'})
+        with urllib.request.urlopen(req, timeout=10) as response:
+            data = json.loads(response.read().decode('utf-8'))
+            if data.get('status') == 'success':
+                bcp = data['response']['stations'].get('bcp', {})
+                res['gasoline'] = bcp.get('gasohol_95', {}).get('price')
+                res['diesel'] = bcp.get('premium_diesel', {}).get('price') 
+                res['e20'] = bcp.get('gasohol_e20', {}).get('price')
+                res['e85'] = bcp.get('gasohol_e85', {}).get('price')
+                if res['gasoline'] and res['diesel']:
+                    print("Thai prices fetched from Primary (chnwt.dev)")
+                    return res
+    except Exception as e:
+        print(f"Primary Thai fetch failed: {e}")
+
+    # 2. Secondary: Official Bangchak API v2
+    try:
+        req = urllib.request.Request("https://oil-price.bangchak.co.th/ApiOilPrice2/th", headers={'User-Agent': 'Mozilla/5.0'})
+        with urllib.request.urlopen(req, timeout=10) as response:
+            data = json.loads(response.read().decode('utf-8'))
+            if data and isinstance(data, list):
+                oil_list = json.loads(data[0].get('OilList', '[]'))
+                for item in oil_list:
+                    name = item.get('OilName', '')
+                    price = item.get('PriceToday')
+                    if "95" in name and "EVO" in name: res['gasoline'] = price
+                    elif "Diesel S" in name or "ดเซล S" in name: res['diesel'] = price
+                    elif "E20" in name: res['e20'] = price
+                    elif "E85" in name: res['e85'] = price
+                if res['gasoline'] and res['diesel']:
+                    print("Thai prices fetched from Secondary (BCP v2)")
+                    return res
+    except Exception as e:
+        print(f"Secondary Thai fetch failed: {e}")
+        
+    return res
+
+def fetch_real_prices(data):
+    """Orchestrates all scrapers and updates data structure"""
     today = datetime.now(tz).strftime("%Y-%m-%d")
     data['last_updated'] = today
     
     rates = fetch_exchange_rates()
     eppo_data = fetch_eppo_prices()
     
-    # Real World Data Containers
     real_prices = {
-        'TH': {'gasoline': None, 'diesel': None, 'e20': None, 'e85': None},
+        'TH': fetch_thai_prices(),
         'MY': fetch_malaysia_prices(rates),
         'SG': fetch_singapore_prices(rates),
         'ID': eppo_data.get('ID', {'gasoline': None, 'diesel': None}),
@@ -140,24 +169,6 @@ def fetch_real_prices(data):
         'PH': eppo_data.get('PH', {'gasoline': None, 'diesel': None}),
         'LA': eppo_data.get('LA', {'gasoline': None, 'diesel': None})
     }
-
-    # THAILAND FETCH
-    try:
-        req = urllib.request.Request("https://www.bangchak.co.th/api/oilprice", headers={'User-Agent': 'Mozilla/5.0'})
-        with urllib.request.urlopen(req, timeout=10) as response:
-            if response.status == 200:
-                bc_data = json.loads(response.read().decode('utf-8'))
-                for item in bc_data.get('data', {}).get('items', []):
-                    if item.get('OilName') == 'แก๊สโซฮอล์ 95 S EVO':
-                        real_prices['TH']['gasoline'] = item.get('PriceToday')
-                    elif item.get('OilName') == 'ไฮดีเซล S':
-                        real_prices['TH']['diesel'] = item.get('PriceToday')
-                    elif item.get('OilName') == 'แก๊สโซฮอล์ E20 S EVO':
-                        real_prices['TH']['e20'] = item.get('PriceToday')
-                    elif item.get('OilName') == 'แก๊สโซฮอล์ E85 S EVO':
-                        real_prices['TH']['e85'] = item.get('PriceToday')
-    except Exception as e:
-        print(f"THfetch failed: {e}")
     
     for fuel_type in ['gasoline', 'diesel']:
         labels = [(datetime.now(tz) - timedelta(days=i)).strftime("%b %d") for i in range(29, -1, -1)]
@@ -170,60 +181,25 @@ def fetch_real_prices(data):
             if fetched_price is not None:
                 new_price = round(float(fetched_price), 2)
             else:
-                # Fallback mechanism if scrapers fail or are unimplemented
-                # Simulates a VERY minor market drift (+-0.10) to keep charts alive but prevent wild jumps
-                change = random.uniform(-0.1, 0.1)
-                new_price = round(card['price'] + change, 2)
+                if country_code == 'TH':
+                    new_price = card['price']
+                else:
+                    change = random.uniform(-0.1, 0.1)
+                    new_price = round(card['price'] + change, 2)
             
             change = round(new_price - card['price'], 2)
             card['price'] = new_price
             card['change'] = f"{change:+.2f}"
+            card['trend'] = 'up' if change > 0 else ('down' if change < 0 else 'flat')
             
-            if change > 0:
-                card['trend'] = 'up'
-            elif change < 0:
-                card['trend'] = 'down'
-            else:
-                card['trend'] = 'flat'
-            
-            # History
             history_dataset = next(d for d in data[fuel_type]['history']['datasets'] if d['label'] == card['country'])
             history_data = history_dataset['data']
-            
             history_data.pop(0)
             history_data.append(card['price'])
             history_dataset['data'] = [round(v, 2) for v in history_data]
 
-    # SEED AND UPDATE TRENDS_TH
-    if 'trends_th' not in data:
-        data['trends_th'] = {
-            'last_known_prices': {
-                'gasoline': 40.0,
-                'e20': 38.0,
-                'e85': 30.0,
-                'diesel': 32.0
-            },
-            'table_data': [
-                {'date': '18 มี.ค. 69', 'gasoline': 1.00, 'e20': -0.79, 'e85': -2.00, 'diesel': 0.50},
-                {'date': '21 มี.ค. 69', 'gasoline': 1.00, 'e20': 1.00, 'e85': 1.00, 'diesel': 0.70},
-                {'date': '24 มี.ค. 69', 'gasoline': 2.00, 'e20': 2.00, 'e85': 2.00, 'diesel': 1.80},
-                {'date': '26 มี.ค. 69', 'gasoline': 6.00, 'e20': 6.00, 'e85': 6.00, 'diesel': 6.00},
-                {'date': '31 มี.ค. 69', 'gasoline': 1.00, 'e20': 1.00, 'e85': 1.00, 'diesel': 1.80},
-                {'date': '2 เม.ย. 69', 'gasoline': 1.20, 'e20': 1.20, 'e85': 1.20, 'diesel': 3.50},
-                {'date': '3 เม.ย. 69', 'gasoline': 0.70, 'e20': 0.70, 'e85': 0.70, 'diesel': 3.50},
-                {'date': '5 เม.ย. 69', 'gasoline': 0.00, 'e20': 0.00, 'e85': 0.00, 'diesel': 2.80}
-            ]
-        }
-        # Update last known to the real fetched if available initially, otherwise use fake base
-        if real_prices['TH']['gasoline']:
-            data['trends_th']['last_known_prices'] = {
-                'gasoline': float(real_prices['TH']['gasoline']),
-                'e20': float(real_prices['TH']['e20'] or 38.0),
-                'e85': float(real_prices['TH']['e85'] or 30.0),
-                'diesel': float(real_prices['TH']['diesel'])
-            }
-    else:
-        # Check for daily deltas
+    # UPDATE TRENDS_TH
+    if 'trends_th' in data:
         last_known = data['trends_th']['last_known_prices']
         curr_g = float(real_prices['TH']['gasoline'] or last_known['gasoline'])
         curr_e20 = float(real_prices['TH']['e20'] or last_known['e20'])
@@ -235,27 +211,17 @@ def fetch_real_prices(data):
         d_e85 = round(curr_e85 - last_known['e85'], 2)
         d_d = round(curr_d - last_known['diesel'], 2)
 
-        # If any price changed
         if any(abs(d) > 0.001 for d in [d_g, d_e20, d_e85, d_d]):
-            # Format date to match mock up (e.g. 10 เม.ย. 69)
             thai_months = ["ม.ค.", "ก.พ.", "มี.ค.", "เม.ย.", "พ.ค.", "มิ.ย.", "ก.ค.", "ส.ค.", "ก.ย.", "ต.ค.", "พ.ย.", "ธ.ค."]
             now = datetime.now(tz)
             thai_year = now.year + 543
             formatted_date = f"{now.day} {thai_months[now.month-1]} {str(thai_year)[-2:]}"
             
             data['trends_th']['table_data'].append({
-                'date': formatted_date,
-                'gasoline': d_g,
-                'e20': d_e20,
-                'e85': d_e85,
-                'diesel': d_d
+                'date': formatted_date, 'gasoline': d_g, 'e20': d_e20, 'e85': d_e85, 'diesel': d_d
             })
-            
             data['trends_th']['last_known_prices'] = {
-                'gasoline': curr_g,
-                'e20': curr_e20,
-                'e85': curr_e85,
-                'diesel': curr_d
+                'gasoline': curr_g, 'e20': curr_e20, 'e85': curr_e85, 'diesel': curr_d
             }
 
     return data
