@@ -124,28 +124,46 @@ def fetch_thai_prices():
                 res['diesel'] = bcp.get('premium_diesel', {}).get('price') 
                 res['e20'] = bcp.get('gasohol_e20', {}).get('price')
                 res['e85'] = bcp.get('gasohol_e85', {}).get('price')
+                
+                # Check if we got valid floats
                 if res['gasoline'] and res['diesel']:
-                    print("Thai prices fetched from Primary (chnwt.dev)")
+                    print(f"Thai prices fetched from Primary (chnwt.dev). Gas95: {res['gasoline']}, Diesel: {res['diesel']}")
                     return res
     except Exception as e:
         print(f"Primary Thai fetch failed: {e}")
 
-    # 2. Secondary: Official Bangchak API v2
+    # 2. Secondary: Official Bangchak API v2 (More robust as it has Tomorrow's prices)
     try:
         req = urllib.request.Request("https://oil-price.bangchak.co.th/ApiOilPrice2/th", headers={'User-Agent': 'Mozilla/5.0'})
         with urllib.request.urlopen(req, timeout=10) as response:
             data = json.loads(response.read().decode('utf-8'))
             if data and isinstance(data, list):
                 oil_list = json.loads(data[0].get('OilList', '[]'))
+                
+                # We prioritize PriceTomorrow if current time is late (e.g. evening announcement)
+                # or if we're running the 5 AM sync and want to be sure.
+                now_th = datetime.now(tz)
+                use_tomorrow = now_th.hour >= 17 # Prices usually announced at 5 PM
+                
                 for item in oil_list:
                     name = item.get('OilName', '')
-                    price = item.get('PriceToday')
+                    price_today = item.get('PriceToday')
+                    price_tomorrow = item.get('PriceTomorrow')
+                    
+                    # Log for debugging
+                    # print(f"BCP API: {name} | Today: {price_today} | Tomorrow: {price_tomorrow}")
+                    
+                    # Logic: If tomorrow's price is available and we're in the evening, 
+                    # OR if price_today is None, use price_tomorrow.
+                    price = price_tomorrow if (use_tomorrow and price_tomorrow) else (price_today or price_tomorrow)
+                    
                     if "95" in name and "EVO" in name: res['gasoline'] = price
                     elif "Diesel S" in name or "ดเซล S" in name: res['diesel'] = price
                     elif "E20" in name: res['e20'] = price
                     elif "E85" in name: res['e85'] = price
+                
                 if res['gasoline'] and res['diesel']:
-                    print("Thai prices fetched from Secondary (BCP v2)")
+                    print(f"Thai prices fetched from Secondary (BCP v2). Used Tomorrow logic: {use_tomorrow}")
                     return res
     except Exception as e:
         print(f"Secondary Thai fetch failed: {e}")
