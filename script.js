@@ -426,11 +426,11 @@ document.addEventListener('DOMContentLoaded', () => {
             let sumG = 0, sumE20 = 0, sumE85 = 0, sumD = 0;
             const dataG = [], dataE20 = [], dataE85 = [], dataD = [];
 
-            tableData.forEach(r => {
-                sumG += r.gasoline;
-                sumE20 += r.e20;
-                sumE85 += r.e85;
-                sumD += r.diesel;
+            tableData.forEach(row => {
+                sumG += (row.gasoline || 0);
+                sumE20 += (row.e20 || 0);
+                sumE85 += (row.e85 || 0);
+                sumD += (row.diesel || 0);
                 dataG.push(sumG);
                 dataE20.push(sumE20);
                 dataE85.push(sumE85);
