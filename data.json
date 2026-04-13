@@ -16,7 +16,7 @@
             {
                 "country": "Malaysia",
                 "code": "MY",
-                "price": 34.53,
+                "price": 34.54,
                 "unit": "THB/L",
                 "trend": "flat",
                 "change": "+0.00",
@@ -27,10 +27,10 @@
             {
                 "country": "Singapore",
                 "code": "SG",
-                "price": 86.59,
+                "price": 86.75,
                 "unit": "THB/L",
-                "trend": "down",
-                "change": "-0.06",
+                "trend": "up",
+                "change": "+0.05",
                 "type": "Octane 95",
                 "color": "var(--color-sg)",
                 "flag": "🇸🇬"
@@ -183,8 +183,8 @@
                         86.67,
                         86.64,
                         86.71,
-                        86.65,
-                        86.59
+                        86.7,
+                        86.75
                     ],
                     "borderColor": "#10b981",
                     "backgroundColor": "rgba(16, 185, 129, 0.1)",
@@ -221,8 +221,8 @@
                         34.36,
                         34.53,
                         34.53,
-                        34.53,
-                        34.53
+                        34.54,
+                        34.54
                     ],
                     "borderColor": "#f59e0b",
                     "backgroundColor": "rgba(245, 158, 11, 0.1)",
@@ -389,10 +389,10 @@
             {
                 "country": "Thailand",
                 "code": "TH",
-                "price": 66.8,
+                "price": 44.4,
                 "unit": "THB/L",
-                "trend": "up",
-                "change": "+22.40",
+                "trend": "flat",
+                "change": "+0.00",
                 "type": "Diesel",
                 "color": "var(--color-th)",
                 "flag": "🇹🇭"
@@ -400,10 +400,10 @@
             {
                 "country": "Malaysia",
                 "code": "MY",
-                "price": 54.35,
+                "price": 54.36,
                 "unit": "THB/L",
-                "trend": "up",
-                "change": "+0.01",
+                "trend": "flat",
+                "change": "+0.00",
                 "type": "Diesel",
                 "color": "var(--color-my)",
                 "flag": "🇲🇾"
@@ -411,10 +411,10 @@
             {
                 "country": "Singapore",
                 "code": "SG",
-                "price": 117.89,
+                "price": 118.09,
                 "unit": "THB/L",
-                "trend": "up",
-                "change": "+0.03",
+                "trend": "flat",
+                "change": "+0.00",
                 "type": "Diesel",
                 "color": "var(--color-sg)",
                 "flag": "🇸🇬"
@@ -511,26 +511,26 @@
                         44.24,
                         50.54,
                         50.54,
-                        50.93,
-                        50.54,
-                        50.54,
-                        50.54,
-                        50.62,
-                        50.54,
-                        50.54,
-                        50.54,
-                        50.54,
-                        48.4,
-                        48.4,
-                        48.4,
-                        48.48,
-                        48.45,
-                        48.45,
-                        48.4,
+                        33.0,
+                        33.0,
+                        33.0,
+                        33.0,
+                        33.0,
+                        33.0,
+                        33.0,
+                        33.0,
+                        33.0,
+                        33.0,
+                        33.0,
+                        33.0,
+                        33.0,
+                        33.0,
+                        33.0,
+                        33.0,
                         44.4,
                         44.4,
-                        44.4,
-                        66.8
+                        29.94,
+                        44.4
                     ],
                     "borderColor": "#ef4444",
                     "backgroundColor": "rgba(239, 68, 68, 0.1)",
@@ -567,8 +567,8 @@
                         117.85,
                         117.86,
                         117.86,
-                        117.86,
-                        117.89
+                        118.09,
+                        118.09
                     ],
                     "borderColor": "#10b981",
                     "backgroundColor": "rgba(16, 185, 129, 0.1)",
@@ -605,8 +605,8 @@
                         54.07,
                         54.34,
                         54.34,
-                        54.34,
-                        54.35
+                        54.36,
+                        54.36
                     ],
                     "borderColor": "#f59e0b",
                     "backgroundColor": "rgba(245, 158, 11, 0.1)",
@@ -773,7 +773,7 @@
             "gasoline": 42.95,
             "e20": 35.95,
             "e85": 31.89,
-            "diesel": 66.8
+            "diesel": 44.4
         },
         "table_data": [
             {
@@ -851,7 +851,7 @@
                 "gasoline": 0.0,
                 "e20": 0.0,
                 "e85": 0.0,
-                "diesel": 22.4
+                "diesel": -14.46
             }
         ]
     }

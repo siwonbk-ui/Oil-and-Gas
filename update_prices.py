@@ -121,14 +121,17 @@ def fetch_thai_prices():
             if data.get('status') == 'success':
                 bcp = data['response']['stations'].get('bcp', {})
                 res['gasoline'] = bcp.get('gasohol_95', {}).get('price')
-                res['diesel'] = bcp.get('premium_diesel', {}).get('price') 
+                res['diesel'] = bcp.get('diesel', {}).get('price') 
                 res['e20'] = bcp.get('gasohol_e20', {}).get('price')
                 res['e85'] = bcp.get('gasohol_e85', {}).get('price')
                 
-                # Check if we got valid floats
+                # Check if we got valid floats and avoid the stale 29.94 price if possible
                 if res['gasoline'] and res['diesel']:
-                    print(f"Thai prices fetched from Primary (chnwt.dev). Gas95: {res['gasoline']}, Diesel: {res['diesel']}")
-                    return res
+                    if res['diesel'] == 29.94: # Specific check for stale price seen in chnwt.dev
+                        print(f"Warning: chnwt.dev returned stale diesel price (29.94). Falling back to Secondary.")
+                    else:
+                        print(f"Thai prices fetched from Primary (chnwt.dev). Gas95: {res['gasoline']}, Diesel: {res['diesel']}")
+                        return res
     except Exception as e:
         print(f"Primary Thai fetch failed: {e}")
 
@@ -158,7 +161,8 @@ def fetch_thai_prices():
                     price = price_tomorrow if (use_tomorrow and price_tomorrow) else (price_today or price_tomorrow)
                     
                     if "95" in name and "EVO" in name: res['gasoline'] = price
-                    elif "Diesel S" in name or "ดเซล S" in name: res['diesel'] = price
+                    elif ("Diesel S" in name or "ดีเซล S" in name) and "Premium" not in name and "พรีเมียม" not in name: 
+                        res['diesel'] = price
                     elif "E20" in name: res['e20'] = price
                     elif "E85" in name: res['e85'] = price
                 
