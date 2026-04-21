@@ -668,8 +668,9 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Fetch data from external JSON file
-    fetch('data.json')
+    // Fetch data from external JSON file (with cache busting)
+    const timestamp = new Date().getTime();
+    fetch(`data.json?t=${timestamp}`)
         .then(response => {
             if (!response.ok) {
                 throw new Error('Network response was not ok');

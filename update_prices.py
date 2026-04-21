@@ -4,6 +4,7 @@ from datetime import datetime, timezone, timedelta
 import urllib.request
 import os
 import re
+import ssl
 
 # This script fetches real prices via API/Scraping and updates data.json
 FILE_PATH = 'data.json'
@@ -69,44 +70,71 @@ def fetch_singapore_prices(rates):
     return prices
 
 def fetch_eppo_prices():
-    """Fetches ASEAN oil prices from EPPO legacy source using robust positional mapping"""
+    """Scrapes ASEAN oil prices from EPPO iframe source with SSL bypass"""
     url = "https://www.eppo.go.th/graph/main.php?mini=1"
     try:
+        ctx = ssl.create_default_context()
+        ctx.check_hostname = False
+        ctx.verify_mode = ssl.CERT_NONE
+        
         req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0'})
-        with urllib.request.urlopen(req, timeout=15) as response:
-            content = response.read()
-            html = content.decode('cp874', errors='ignore')
+        with urllib.request.urlopen(req, timeout=15, context=ctx) as response:
+            html = response.read().decode('utf-8')
             
-            gasoline_order = ['SG', 'MM', 'LA', 'KH', 'PH', 'TH', 'VN', 'MY', 'ID', 'BN']
-            diesel_order = ['SG', 'MM', 'LA', 'PH', 'KH', 'VN', 'TH', 'MY', 'ID', 'BN']
+            # Target the tab-6 section which contains the tables
+            if 'id="tabs-6"' in html:
+                html = html.split('id="tabs-6"')[1]
+
+            # Map Thai names to country codes
+            country_map = {
+                'สิงคโปร์': 'SG',
+                'เมียนมา': 'MM',
+                'ลาว': 'LA',
+                'กัมพูชา': 'KH',
+                'ฟิลิปปินส์': 'PH',
+                'ไทย': 'TH',
+                'เวียดนาม': 'VN',
+                'มาเลเซีย': 'MY',
+                'อินโดนีเซีย': 'ID',
+                'บรูไน': 'BN'
+            }
             
             extracted = {}
-            for code in set(gasoline_order + diesel_order):
+            for code in country_map.values():
                 extracted[code] = {'gasoline': None, 'diesel': None}
             
-            rows = re.findall(r'<tr[^>]*>(.*?)</tr>', html, re.DOTALL)
-            data_rows = []
-            for row in rows:
-                tds = re.findall(r'<td[^>]*>(.*?)</td>', row, re.DOTALL)
-                clean_tds = [re.sub(r'<.*?>', '', td).replace('*', '').strip() for td in tds]
-                if len(clean_tds) == 2:
-                    price_str = clean_tds[1].replace(',', '').strip()
-                    if price_str.replace('.', '').isdigit() and len(price_str) > 0:
-                        data_rows.append(price_str)
+            def parse_table_content(table_html, fuel_type):
+                rows = re.findall(r'<tr[^>]*>(.*?)</tr>', table_html, re.DOTALL)
+                for row in rows:
+                    tds = re.findall(r'<td[^>]*>(.*?)</td>', row, re.DOTALL)
+                    cells = [re.sub(r'<.*?>', '', c).strip() for c in tds]
+                    if len(cells) >= 2:
+                        c_name = cells[0].replace('*', '').strip()
+                        c_price = cells[1].replace(',', '').strip()
+                        if c_name in country_map:
+                            c_code = country_map[c_name]
+                            try:
+                                val = float(c_price)
+                                # Only set if not already set (to avoid header rows if any)
+                                if extracted[c_code][fuel_type] is None:
+                                    extracted[c_code][fuel_type] = val
+                            except: pass
+
+            # Split by fuel headers
+            gas_idx = html.find('เบนซิน')
+            die_idx = html.find('ดีเซล')
             
-            if len(data_rows) >= 20:
-                for i in range(10):
-                    code = gasoline_order[i]
-                    try: extracted[code]['gasoline'] = float(data_rows[i])
-                    except: pass
-                for i in range(10):
-                    code = diesel_order[i]
-                    try: extracted[code]['diesel'] = float(data_rows[10 + i])
-                    except: pass
+            if gas_idx != -1 and die_idx != -1:
+                if gas_idx < die_idx:
+                    parse_table_content(html[gas_idx:die_idx], 'gasoline')
+                    parse_table_content(html[die_idx:], 'diesel')
+                else:
+                    parse_table_content(html[die_idx:gas_idx], 'diesel')
+                    parse_table_content(html[gas_idx:], 'gasoline')
             
-            return {k: v for k, v in extracted.items() if v['gasoline'] is not None or v['diesel'] is not None}
+            return {k: v for k, v in extracted.items() if v['gasoline'] or v['diesel']}
     except Exception as e:
-        print(f"EPPO legacy fetch failed: {e}")
+        print(f"EPPO fetch failed: {e}")
     return {}
 
 def fetch_thai_prices():
