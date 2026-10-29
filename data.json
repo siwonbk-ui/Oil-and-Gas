@@ -5,10 +5,10 @@
             {
                 "country": "Thailand",
                 "code": "TH",
-                "price": 42.04,
+                "price": 41.54,
                 "unit": "THB/L",
-                "trend": "flat",
-                "change": "+0.00",
+                "trend": "down",
+                "change": "-0.50",
                 "type": "Gasohol 95",
                 "color": "var(--color-th)",
                 "flag": "🇹🇭"
@@ -16,10 +16,10 @@
             {
                 "country": "Malaysia",
                 "code": "MY",
-                "price": 35.68,
+                "price": 36.59,
                 "unit": "THB/L",
-                "trend": "down",
-                "change": "-0.04",
+                "trend": "up",
+                "change": "+0.91",
                 "type": "RON 95",
                 "color": "var(--color-my)",
                 "flag": "🇲🇾"
@@ -27,10 +27,10 @@
             {
                 "country": "Singapore",
                 "code": "SG",
-                "price": 86.28,
+                "price": 86.29,
                 "unit": "THB/L",
                 "trend": "up",
-                "change": "+0.09",
+                "change": "+0.01",
                 "type": "Octane 95",
                 "color": "var(--color-sg)",
                 "flag": "🇸🇬"
@@ -38,10 +38,10 @@
             {
                 "country": "Indonesia",
                 "code": "ID",
-                "price": 24.23,
+                "price": 24.22,
                 "unit": "THB/L",
                 "trend": "down",
-                "change": "-0.02",
+                "change": "-0.01",
                 "type": "Pertamax",
                 "color": "var(--color-id)",
                 "flag": "🇮🇩"
@@ -49,10 +49,10 @@
             {
                 "country": "Vietnam",
                 "code": "VN",
-                "price": 30.31,
+                "price": 30.24,
                 "unit": "THB/L",
-                "trend": "up",
-                "change": "+0.04",
+                "trend": "down",
+                "change": "-0.07",
                 "type": "RON 95",
                 "color": "var(--color-vn)",
                 "flag": "🇻🇳"
@@ -60,10 +60,10 @@
             {
                 "country": "Philippines",
                 "code": "PH",
-                "price": 44.06,
+                "price": 44.05,
                 "unit": "THB/L",
-                "trend": "up",
-                "change": "+0.04",
+                "trend": "down",
+                "change": "-0.01",
                 "type": "Gasoline 95",
                 "color": "var(--color-ph)",
                 "flag": "🇵🇭"
@@ -71,10 +71,10 @@
             {
                 "country": "Laos",
                 "code": "LA",
-                "price": 49.55,
+                "price": 49.58,
                 "unit": "THB/L",
-                "trend": "down",
-                "change": "-0.08",
+                "trend": "up",
+                "change": "+0.03",
                 "type": "Regular 95",
                 "color": "var(--color-la)",
                 "flag": "🇱🇦"
@@ -82,7 +82,6 @@
         ],
         "history": {
             "labels": [
-                "Sep 29",
                 "Sep 30",
                 "Oct 01",
                 "Oct 02",
@@ -111,7 +110,8 @@
                 "Oct 25",
                 "Oct 26",
                 "Oct 27",
-                "Oct 28"
+                "Oct 28",
+                "Oct 29"
             ],
             "datasets": [
                 {
@@ -119,7 +119,6 @@
                     "data": [
                         39.94,
                         39.94,
-                        39.94,
                         40.69,
                         40.69,
                         40.69,
@@ -146,7 +145,8 @@
                         42.04,
                         42.04,
                         42.04,
-                        42.04
+                        42.04,
+                        41.54
                     ],
                     "borderColor": "#ef4444",
                     "backgroundColor": "rgba(239, 68, 68, 0.1)",
@@ -155,7 +155,6 @@
                 {
                     "label": "Singapore",
                     "data": [
-                        86.66,
                         86.57,
                         86.64,
                         86.71,
@@ -184,7 +183,8 @@
                         86.36,
                         86.29,
                         86.19,
-                        86.28
+                        86.28,
+                        86.29
                     ],
                     "borderColor": "#10b981",
                     "backgroundColor": "rgba(16, 185, 129, 0.1)",
@@ -193,7 +193,6 @@
                 {
                     "label": "Malaysia",
                     "data": [
-                        37.6,
                         37.6,
                         37.19,
                         37.25,
@@ -222,7 +221,8 @@
                         35.69,
                         35.69,
                         35.72,
-                        35.68
+                        35.68,
+                        36.59
                     ],
                     "borderColor": "#f59e0b",
                     "backgroundColor": "rgba(245, 158, 11, 0.1)",
@@ -231,7 +231,6 @@
                 {
                     "label": "Indonesia",
                     "data": [
-                        24.25,
                         24.26,
                         24.27,
                         24.21,
@@ -260,7 +259,8 @@
                         24.33,
                         24.29,
                         24.25,
-                        24.23
+                        24.23,
+                        24.22
                     ],
                     "borderColor": "#6366f1",
                     "backgroundColor": "rgba(99, 102, 241, 0.1)",
@@ -269,7 +269,6 @@
                 {
                     "label": "Vietnam",
                     "data": [
-                        29.97,
                         29.98,
                         29.93,
                         29.88,
@@ -298,7 +297,8 @@
                         30.31,
                         30.21,
                         30.27,
-                        30.31
+                        30.31,
+                        30.24
                     ],
                     "borderColor": "#ec4899",
                     "backgroundColor": "rgba(236, 72, 153, 0.1)",
@@ -307,7 +307,6 @@
                 {
                     "label": "Philippines",
                     "data": [
-                        44.33,
                         44.43,
                         44.52,
                         44.45,
@@ -336,7 +335,8 @@
                         44.03,
                         44.03,
                         44.02,
-                        44.06
+                        44.06,
+                        44.05
                     ],
                     "borderColor": "#3b82f6",
                     "backgroundColor": "rgba(59, 130, 246, 0.1)",
@@ -345,7 +345,6 @@
                 {
                     "label": "Laos",
                     "data": [
-                        49.34,
                         49.24,
                         49.33,
                         49.3,
@@ -374,7 +373,8 @@
                         49.53,
                         49.58,
                         49.63,
-                        49.55
+                        49.55,
+                        49.58
                     ],
                     "borderColor": "#8b5cf6",
                     "backgroundColor": "rgba(139, 92, 246, 0.1)",
@@ -389,10 +389,10 @@
             {
                 "country": "Thailand",
                 "code": "TH",
-                "price": 43.54,
+                "price": 42.54,
                 "unit": "THB/L",
-                "trend": "flat",
-                "change": "+0.00",
+                "trend": "down",
+                "change": "-1.00",
                 "type": "Diesel",
                 "color": "var(--color-th)",
                 "flag": "🇹🇭"
@@ -400,10 +400,10 @@
             {
                 "country": "Malaysia",
                 "code": "MY",
-                "price": 41.88,
+                "price": 43.63,
                 "unit": "THB/L",
-                "trend": "down",
-                "change": "-0.04",
+                "trend": "up",
+                "change": "+1.75",
                 "type": "Diesel",
                 "color": "var(--color-my)",
                 "flag": "🇲🇾"
@@ -411,10 +411,10 @@
             {
                 "country": "Singapore",
                 "code": "SG",
-                "price": 107.29,
+                "price": 107.19,
                 "unit": "THB/L",
                 "trend": "down",
-                "change": "-0.11",
+                "change": "-0.10",
                 "type": "Diesel",
                 "color": "var(--color-sg)",
                 "flag": "🇸🇬"
@@ -422,10 +422,10 @@
             {
                 "country": "Indonesia",
                 "code": "ID",
-                "price": 41.47,
+                "price": 41.55,
                 "unit": "THB/L",
-                "trend": "down",
-                "change": "-0.09",
+                "trend": "up",
+                "change": "+0.08",
                 "type": "Diesel",
                 "color": "var(--color-id)",
                 "flag": "🇮🇩"
@@ -433,10 +433,10 @@
             {
                 "country": "Vietnam",
                 "code": "VN",
-                "price": 36.45,
+                "price": 36.5,
                 "unit": "THB/L",
-                "trend": "down",
-                "change": "-0.02",
+                "trend": "up",
+                "change": "+0.05",
                 "type": "Diesel",
                 "color": "var(--color-vn)",
                 "flag": "🇻🇳"
@@ -444,10 +444,10 @@
             {
                 "country": "Philippines",
                 "code": "PH",
-                "price": 45.45,
+                "price": 45.5,
                 "unit": "THB/L",
-                "trend": "down",
-                "change": "-0.04",
+                "trend": "up",
+                "change": "+0.05",
                 "type": "Diesel",
                 "color": "var(--color-ph)",
                 "flag": "🇵🇭"
@@ -455,10 +455,10 @@
             {
                 "country": "Laos",
                 "code": "LA",
-                "price": 50.55,
+                "price": 50.51,
                 "unit": "THB/L",
                 "trend": "down",
-                "change": "-0.03",
+                "change": "-0.04",
                 "type": "Diesel",
                 "color": "var(--color-la)",
                 "flag": "🇱🇦"
@@ -466,7 +466,6 @@
         ],
         "history": {
             "labels": [
-                "Sep 29",
                 "Sep 30",
                 "Oct 01",
                 "Oct 02",
@@ -495,7 +494,8 @@
                 "Oct 25",
                 "Oct 26",
                 "Oct 27",
-                "Oct 28"
+                "Oct 28",
+                "Oct 29"
             ],
             "datasets": [
                 {
@@ -503,7 +503,6 @@
                     "data": [
                         41.44,
                         41.44,
-                        41.44,
                         42.19,
                         42.19,
                         42.19,
@@ -530,7 +529,8 @@
                         43.54,
                         43.54,
                         43.54,
-                        43.54
+                        43.54,
+                        42.54
                     ],
                     "borderColor": "#ef4444",
                     "backgroundColor": "rgba(239, 68, 68, 0.1)",
@@ -539,7 +539,6 @@
                 {
                     "label": "Singapore",
                     "data": [
-                        106.92,
                         106.89,
                         106.98,
                         107.01,
@@ -568,7 +567,8 @@
                         107.45,
                         107.42,
                         107.4,
-                        107.29
+                        107.29,
+                        107.19
                     ],
                     "borderColor": "#10b981",
                     "backgroundColor": "rgba(16, 185, 129, 0.1)",
@@ -577,7 +577,6 @@
                 {
                     "label": "Malaysia",
                     "data": [
-                        44.59,
                         44.59,
                         43.36,
                         43.43,
@@ -606,7 +605,8 @@
                         41.89,
                         41.89,
                         41.92,
-                        41.88
+                        41.88,
+                        43.63
                     ],
                     "borderColor": "#f59e0b",
                     "backgroundColor": "rgba(245, 158, 11, 0.1)",
@@ -615,7 +615,6 @@
                 {
                     "label": "Indonesia",
                     "data": [
-                        42.1,
                         42.04,
                         41.99,
                         41.93,
@@ -644,7 +643,8 @@
                         41.51,
                         41.5,
                         41.56,
-                        41.47
+                        41.47,
+                        41.55
                     ],
                     "borderColor": "#6366f1",
                     "backgroundColor": "rgba(99, 102, 241, 0.1)",
@@ -653,7 +653,6 @@
                 {
                     "label": "Vietnam",
                     "data": [
-                        36.23,
                         36.22,
                         36.16,
                         36.17,
@@ -682,7 +681,8 @@
                         36.45,
                         36.4,
                         36.47,
-                        36.45
+                        36.45,
+                        36.5
                     ],
                     "borderColor": "#ec4899",
                     "backgroundColor": "rgba(236, 72, 153, 0.1)",
@@ -691,7 +691,6 @@
                 {
                     "label": "Philippines",
                     "data": [
-                        45.52,
                         45.45,
                         45.49,
                         45.41,
@@ -720,7 +719,8 @@
                         45.64,
                         45.55,
                         45.49,
-                        45.45
+                        45.45,
+                        45.5
                     ],
                     "borderColor": "#3b82f6",
                     "backgroundColor": "rgba(59, 130, 246, 0.1)",
@@ -729,7 +729,6 @@
                 {
                     "label": "Laos",
                     "data": [
-                        50.19,
                         50.15,
                         50.25,
                         50.17,
@@ -758,7 +757,8 @@
                         50.59,
                         50.64,
                         50.58,
-                        50.55
+                        50.55,
+                        50.51
                     ],
                     "borderColor": "#8b5cf6",
                     "backgroundColor": "rgba(139, 92, 246, 0.1)",
@@ -767,13 +767,13 @@
             ]
         }
     },
-    "last_updated": "2026-10-28",
+    "last_updated": "2026-10-29",
     "trends_th": {
         "last_known_prices": {
-            "gasoline": 42.04,
+            "gasoline": 41.54,
             "e20": 33.5,
             "e85": 31.63,
-            "diesel": 43.54
+            "diesel": 42.54
         },
         "table_data": [
             {
@@ -1083,6 +1083,13 @@
                 "e20": -2.19,
                 "e85": 0.0,
                 "diesel": 0.0
+            },
+            {
+                "date": "29 ต.ค. 69",
+                "gasoline": -0.5,
+                "e20": 0.0,
+                "e85": 0.0,
+                "diesel": -1.0
             }
         ]
     }
